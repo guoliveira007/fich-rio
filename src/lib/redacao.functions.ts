@@ -98,6 +98,9 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
             text: [
               `Banca: ${board.label} — ${board.style}`,
               `Extensão da prova: ${board.lines}.`,
+              exactTitle
+                ? `TEMA OBRIGATÓRIO — use EXATAMENTE este título, sem alterar uma palavra: "${exactTitle}". Monte só a coletânea e a instrução da banca para ele.`
+                : "",
               data.topic ? `Assunto pedido pelo aluno: ${data.topic}` : "",
               avoid.length ? `Não repita estes temas:\n${avoid.map((a) => `- ${a}`).join("\n")}` : "",
               extra,
