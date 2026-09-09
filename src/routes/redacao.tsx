@@ -113,7 +113,7 @@ function RedacaoPage() {
   const best = corrected.length ? Math.max(...corrected.map((e) => Number(e.score))) : null;
   const scale = mode === "paragrafo" ? 10 : activeBoard.maxScore;
 
-  async function createTheme() {
+  async function createTheme(exactTitle?: string) {
     setCreating(true);
     try {
       const theme = await generate({
@@ -121,7 +121,8 @@ function RedacaoPage() {
           board,
           mode,
           part: mode === "paragrafo" ? part : undefined,
-          topic: topic.trim() || undefined,
+          exactTitle,
+          topic: exactTitle ? undefined : topic.trim() || undefined,
           avoid: essays.slice(0, 10).map((e) => e.theme_title),
         },
       });
