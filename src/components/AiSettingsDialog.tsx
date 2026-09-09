@@ -33,6 +33,7 @@ type Props = { open: boolean; onOpenChange: (open: boolean) => void };
 export function AiSettingsDialog({ open, onOpenChange }: Props) {
   const fetchSettings = useServerFn(getAiSettings);
   const persist = useServerFn(saveAiSettings);
+  const runTest = useServerFn(testAiSettings);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
