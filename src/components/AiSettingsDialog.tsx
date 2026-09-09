@@ -194,10 +194,20 @@ export function AiSettingsDialog({ open, onOpenChange }: Props) {
             ) : (
               <span />
             )}
-            <Button onClick={() => save.mutate()} disabled={save.isPending || isLoading}>
-              {save.isPending && <Loader2 className="size-4 animate-spin" />}
-              Salvar
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => check.mutate()}
+                disabled={check.isPending || isLoading || (!key.trim() && !data?.hasKey)}
+              >
+                {check.isPending && <Loader2 className="size-4 animate-spin" />}
+                Testar chave
+              </Button>
+              <Button onClick={() => save.mutate()} disabled={save.isPending || isLoading}>
+                {save.isPending && <Loader2 className="size-4 animate-spin" />}
+                Salvar
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
