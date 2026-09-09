@@ -92,6 +92,8 @@ export const REAL_THEMES: Record<BoardId, CorpusTheme[]> = {
       title: "Desafios para a garantia da segurança cibernética de crianças e adolescentes brasileiros",
     },
     { year: "simulado 2026", title: "Impactos das mudanças climáticas sobre as populações vulneráveis no Brasil" },
+    { year: "simulado 2026", title: "Medidas para impedir casos de violência nas escolas brasileiras" },
+
   ],
 };
 
