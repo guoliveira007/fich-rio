@@ -18,7 +18,10 @@ export const REAL_THEMES: Record<BoardId, CorpusTheme[]> = {
     { year: "simulado 2026", title: "Vícios contemporâneos e a crise do sentir" },
     { year: "simulado 2026", title: "O futuro da humanidade ainda pode ser comum?" },
     { year: "simulado 2026", title: "O corpo contemporâneo: entre a liberdade e a performance" },
+    { year: "simulado 2026", title: "A subjetividade humana: entre autenticidade e performance" },
+    { year: "simulado 2026", title: "Ser cidadão no mundo contemporâneo é um privilégio ou um direito?" },
     { year: "simulado 2025", title: "As emoções e sua interferência no processo de comunicação" },
+
   ],
   UNIFESP: [
     {
@@ -56,6 +59,13 @@ export const REAL_THEMES: Record<BoardId, CorpusTheme[]> = {
     },
     { year: "simulado 2026", title: "A busca pelo corpo magro: entre a pressão estética e o benefício à saúde" },
     { year: "simulado 2026", title: "Existe uma crise da sensibilidade na formação das novas gerações?" },
+    { year: "simulado 2026", title: "A redução da maioridade penal é uma medida eficaz de combate à violência?" },
+    {
+      year: "simulado 2026",
+      title: "Descobertas científicas: entre a comoção pública e o rigor metodológico",
+    },
+    { year: "UNESP simulado 2026", title: "Quem se beneficia com a plataformização do trabalho?" },
+
   ],
   ENEM: [
     { year: "2025", title: "Perspectivas acerca do envelhecimento na sociedade brasileira" },
