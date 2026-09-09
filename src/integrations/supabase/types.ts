@@ -550,6 +550,30 @@ export type Database = {
           },
         ]
       }
+      import_claims: {
+        Row: {
+          claimed_at: string | null
+          claimed_by: string | null
+          code: string
+          created_at: string
+          legacy_user_id: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          claimed_by?: string | null
+          code: string
+          created_at?: string
+          legacy_user_id: string
+        }
+        Update: {
+          claimed_at?: string | null
+          claimed_by?: string | null
+          code?: string
+          created_at?: string
+          legacy_user_id?: string
+        }
+        Relationships: []
+      }
       lesson_progress: {
         Row: {
           id: string
@@ -923,7 +947,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_imported_data: { Args: { _code: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
