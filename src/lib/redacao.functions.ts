@@ -75,6 +75,8 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
     const drill = isDrill ? getPart(data.part ?? "introducao") : null;
 
     const rule = THEME_TITLE_RULES[board.id];
+    const exactTitle = data.exactTitle?.trim() || null;
+
 
     const ask = async (extra: string) =>
       aiJson<{ title?: string; prompt?: string }>(
