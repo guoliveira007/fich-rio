@@ -501,24 +501,34 @@ export const getPart = (id: string): PartDrill =>
   PART_DRILLS.find((p) => p.id === id) ?? PART_DRILLS[0]!;
 
 /** Critérios usados quando o treino é de um parágrafo só (nota 0 a 10). */
+const intLevels = (max: number): CriterionLevel[] =>
+  Array.from({ length: max + 1 }, (_, n) => ({
+    score: n,
+    label: String(n),
+    desc: n === 0 ? "Não cumprido." : n === max ? "Plenamente cumprido." : "Cumprido parcialmente.",
+  }));
+
 export const PARAGRAPH_CRITERIA: EssayCriterion[] = [
   {
     id: "tecnica",
     label: "Técnica do parágrafo",
     max: 5,
     hint: "Os passos da técnica aparecem, na ordem, e cumprem a função esperada nessa parte do texto.",
+    levels: intLevels(5),
   },
   {
     id: "conteudo",
     label: "Conteúdo e repertório",
     max: 3,
     hint: "A ideia é densa, o repertório é aplicado e o parágrafo responde ao recorte do tema.",
+    levels: intLevels(3),
   },
   {
     id: "expressao",
     label: "Expressão",
     max: 2,
     hint: "Norma-padrão, pontuação e conectivos precisos.",
+    levels: intLevels(2),
   },
 ];
 
