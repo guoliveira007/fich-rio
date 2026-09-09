@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { aiJson } from "./exam-ai.server";
+import { REAL_THEMES, corpusBrief } from "@/data/redacao-corpus";
 import {
   HIGH_SCORE_LESSONS,
   PARAGRAPH_CRITERIA,
