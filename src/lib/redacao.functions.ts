@@ -59,6 +59,8 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
       .object({
         board: BoardEnum.default("FUVEST"),
         topic: z.string().max(200).optional(),
+        /** Tema oficial/real escolhido pelo aluno — usado literalmente como título. */
+        exactTitle: z.string().max(200).optional(),
         avoid: z.array(z.string().max(200)).max(20).optional(),
         mode: z.enum(["completa", "paragrafo"]).default("completa"),
         part: PartEnum.optional(),
