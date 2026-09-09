@@ -4,7 +4,12 @@ import { useServerFn } from "@tanstack/react-start";
 import { Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-import { GROQ_MODELS, getAiSettings, saveAiSettings } from "@/lib/ai-settings.functions";
+import {
+  GROQ_MODELS,
+  getAiSettings,
+  saveAiSettings,
+  testAiSettings,
+} from "@/lib/ai-settings.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
