@@ -70,6 +70,20 @@ export function AiSettingsDialog({ open, onOpenChange }: Props) {
       toast.error(err instanceof Error ? err.message : "Não foi possível salvar."),
   });
 
+  const check = useMutation({
+    mutationFn: () =>
+      runTest({
+        data: {
+          model: model as (typeof GROQ_MODELS)[number]["value"],
+          ...(key.trim() ? { groqApiKey: key.trim() } : {}),
+        },
+      }),
+    onSuccess: (result) =>
+      result.ok ? toast.success(result.message) : toast.error(result.message),
+    onError: (err: unknown) =>
+      toast.error(err instanceof Error ? err.message : "Não foi possível testar a chave."),
+  });
+
   const remove = useMutation({
     mutationFn: () =>
       persist({
