@@ -117,6 +117,13 @@ export const CURRENT_AGENDA = [
   "formação médica, acesso ao SUS e desertos assistenciais",
   "desinformação, plataformas e regulação digital",
   "cultura brasileira, complexo de vira-lata e valorização da arte nacional",
+  "violência nas escolas e segurança da comunidade escolar",
+  "maioridade penal, sistema socioeducativo e criminalização da juventude",
+  "cidadania, fronteiras e endurecimento das políticas migratórias",
+  "performance de si nas redes: autenticidade, espontaneidade e vitrine digital",
+  "plataformização do trabalho e algoritmos como patrões",
+  "ciência, comoção pública e rigor metodológico na divulgação científica",
+
 ];
 
 /** Bloco de contexto real usado no prompt do gerador de temas. */
