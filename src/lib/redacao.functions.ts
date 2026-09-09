@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { aiJson } from "./exam-ai.server";
+import { REAL_THEMES, corpusBrief } from "@/data/redacao-corpus";
 import {
   HIGH_SCORE_LESSONS,
   PARAGRAPH_CRITERIA,
@@ -84,6 +85,8 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
           "\n\n" +
           themeTitleBrief(board.id) +
           "\n\n" +
+          corpusBrief(board.id) +
+          "\n\n" +
           'Responda só JSON: {"title":"tema no formato da banca","prompt":"instrução da banca + TEXTO 1/2/3 com fonte fictícia plausível"}',
         [
           {
@@ -103,9 +106,20 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
       );
 
     const countWords = (s: string) => s.split(/\s+/).filter(Boolean).length;
+    const norm = (s: string) =>
+      s
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9 ]/g, "")
+        .trim();
+    const usedTitles = new Set(
+      [...REAL_THEMES[board.id].map((t) => t.title), ...avoid].map(norm),
+    );
     const titleOk = (s: string) => {
       const n = countWords(s);
       if (n < rule.words.min || n > rule.words.max) return false;
+      if (usedTitles.has(norm(s))) return false;
       if (board.id === "ENEM" && !/no Brasil|na sociedade brasileira/i.test(s)) return false;
       if (board.id === "ENEM" && s.includes("?")) return false;
       return true;
@@ -117,8 +131,8 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
 
     if (title && !titleOk(title)) {
       parsed = await ask(
-        `O título "${title}" foi REJEITADO por não seguir o formato da banca (${countWords(title)} palavras). ` +
-          `Reescreva a proposta com um título de ${rule.words.min} a ${rule.words.max} palavras, no formato oficial da ${board.label}.`,
+        `O título "${title}" foi REJEITADO (${countWords(title)} palavras) por não seguir o formato da banca ou por repetir uma proposta já aplicada. ` +
+          `Reescreva a proposta com um título INÉDITO de ${rule.words.min} a ${rule.words.max} palavras, no formato oficial da ${board.label}, ancorado no debate atual (2025-2026).`,
       );
       const retryTitle = String(parsed.title ?? "").trim();
       const retryPrompt = String(parsed.prompt ?? "").trim();
