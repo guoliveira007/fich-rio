@@ -85,6 +85,8 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
           "\n\n" +
           themeTitleBrief(board.id) +
           "\n\n" +
+          corpusBrief(board.id) +
+          "\n\n" +
           'Responda só JSON: {"title":"tema no formato da banca","prompt":"instrução da banca + TEXTO 1/2/3 com fonte fictícia plausível"}',
         [
           {
@@ -104,9 +106,20 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
       );
 
     const countWords = (s: string) => s.split(/\s+/).filter(Boolean).length;
+    const norm = (s: string) =>
+      s
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9 ]/g, "")
+        .trim();
+    const usedTitles = new Set(
+      [...REAL_THEMES[board.id].map((t) => t.title), ...avoid].map(norm),
+    );
     const titleOk = (s: string) => {
       const n = countWords(s);
       if (n < rule.words.min || n > rule.words.max) return false;
+      if (usedTitles.has(norm(s))) return false;
       if (board.id === "ENEM" && !/no Brasil|na sociedade brasileira/i.test(s)) return false;
       if (board.id === "ENEM" && s.includes("?")) return false;
       return true;
