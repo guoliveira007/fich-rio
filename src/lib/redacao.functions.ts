@@ -64,32 +64,63 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
     const isDrill = data.mode === "paragrafo";
     const drill = isDrill ? getPart(data.part ?? "introducao") : null;
 
-    const parsed = await aiJson<{ title?: string; prompt?: string }>(
-      "Você elabora propostas de redação dissertativo-argumentativa no estilo exato da banca informada. " +
-        "Monte uma coletânea de 3 textos curtos (um jornalístico/acadêmico, um dado ou estatística e um trecho literário, filosófico ou uma fala). " +
-        "A coletânea NÃO pode entregar a tese pronta; deve abrir posicionamentos diferentes. " +
-        (isDrill
-          ? `O aluno vai escrever APENAS o parágrafo de ${drill!.label.toLowerCase()}, então termine o campo prompt com uma linha "TAREFA:" dizendo isso.`
-          : "") +
-        'Responda só JSON: {"title":"tema em uma frase","prompt":"instrução da banca + TEXTO 1/2/3 com fonte fictícia plausível"}',
-      [
-        {
-          type: "text",
-          text: [
-            `Banca: ${board.label} — ${board.style}`,
-            `Extensão da prova: ${board.lines}.`,
-            data.topic ? `Assunto pedido pelo aluno: ${data.topic}` : "",
-            avoid.length ? `Não repita estes temas:\n${avoid.map((a) => `- ${a}`).join("\n")}` : "",
-            "Gere 1 proposta completa em português do Brasil.",
-          ]
-            .filter(Boolean)
-            .join("\n"),
-        },
-      ],
-    );
+    const rule = THEME_TITLE_RULES[board.id];
 
-    const title = String(parsed.title ?? "").trim();
-    const prompt = String(parsed.prompt ?? "").trim();
+    const ask = async (extra: string) =>
+      aiJson<{ title?: string; prompt?: string }>(
+        "Você elabora propostas de redação dissertativo-argumentativa no estilo exato da banca informada. " +
+          "Monte uma coletânea de 3 textos curtos (um jornalístico/acadêmico, um dado ou estatística e um trecho literário, filosófico ou uma fala). " +
+          "A coletânea NÃO pode entregar a tese pronta; deve abrir posicionamentos diferentes. " +
+          (isDrill
+            ? `O aluno vai escrever APENAS o parágrafo de ${drill!.label.toLowerCase()}, então termine o campo prompt com uma linha "TAREFA:" dizendo isso.`
+            : "") +
+          "\n\n" +
+          themeTitleBrief(board.id) +
+          "\n\n" +
+          'Responda só JSON: {"title":"tema no formato da banca","prompt":"instrução da banca + TEXTO 1/2/3 com fonte fictícia plausível"}',
+        [
+          {
+            type: "text",
+            text: [
+              `Banca: ${board.label} — ${board.style}`,
+              `Extensão da prova: ${board.lines}.`,
+              data.topic ? `Assunto pedido pelo aluno: ${data.topic}` : "",
+              avoid.length ? `Não repita estes temas:\n${avoid.map((a) => `- ${a}`).join("\n")}` : "",
+              extra,
+              "Gere 1 proposta completa em português do Brasil.",
+            ]
+              .filter(Boolean)
+              .join("\n"),
+          },
+        ],
+      );
+
+    const countWords = (s: string) => s.split(/\s+/).filter(Boolean).length;
+    const titleOk = (s: string) => {
+      const n = countWords(s);
+      if (n < rule.words.min || n > rule.words.max) return false;
+      if (board.id === "ENEM" && !/no Brasil|na sociedade brasileira/i.test(s)) return false;
+      if (board.id === "ENEM" && s.includes("?")) return false;
+      return true;
+    };
+
+    let parsed = await ask("");
+    let title = String(parsed.title ?? "").trim();
+    let prompt = String(parsed.prompt ?? "").trim();
+
+    if (title && !titleOk(title)) {
+      parsed = await ask(
+        `O título "${title}" foi REJEITADO por não seguir o formato da banca (${countWords(title)} palavras). ` +
+          `Reescreva a proposta com um título de ${rule.words.min} a ${rule.words.max} palavras, no formato oficial da ${board.label}.`,
+      );
+      const retryTitle = String(parsed.title ?? "").trim();
+      const retryPrompt = String(parsed.prompt ?? "").trim();
+      if (retryTitle && retryPrompt) {
+        title = retryTitle;
+        prompt = retryPrompt;
+      }
+    }
+
     if (!title || !prompt) throw new Error("Não consegui montar a proposta. Tente de novo.");
 
     const { data: created, error } = await supabase
