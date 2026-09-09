@@ -34,6 +34,25 @@ function sanitizeId(raw: string, label: string) {
   return value;
 }
 
+/**
+ * Só o dono da conta ligada (perfil admin) pode usar a nuvem.
+ * A conexão do OneDrive é única do projeto, então qualquer outra pessoa logada
+ * estaria acessando arquivos pessoais de terceiros.
+ */
+async function requireOneDriveOwner(userId: string | null | undefined) {
+  if (!userId) throw new Error("Acesso negado.");
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.rpc("has_role", {
+    _user_id: userId,
+    _role: "admin",
+  });
+  if (error) {
+    console.error("[onedrive] verificação de permissão falhou:", error);
+    throw new Error("Acesso negado.");
+  }
+  if (data !== true) throw new Error("Acesso negado.");
+}
+
 async function graph(path: string, init?: RequestInit) {
   const apiKey = process.env["MICROSOFT_ONEDRIVE_API_KEY"];
   const lovableKey = process.env["LOVABLE_API_KEY"];
