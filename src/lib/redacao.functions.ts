@@ -38,7 +38,14 @@ export type EssayGrade = {
 };
 
 const briefOf = (criteria: EssayCriterion[]) =>
-  criteria.map((c) => `- ${c.id} (${c.label}, 0 a ${c.max}): ${c.hint}`).join("\n");
+  criteria
+    .map(
+      (c) =>
+        `- ${c.id} (${c.label}, 0 a ${c.max}): ${c.hint}\n  Faixas OFICIAIS permitidas (use exatamente um destes valores):\n${c.levels
+          .map((l) => `    · ${l.score} — ${l.label}: ${l.desc}`)
+          .join("\n")}`,
+    )
+    .join("\n");
 
 const BoardEnum = z.enum(["FUVEST", "UNIFESP", "ENEM"]);
 const PartEnum = z.enum(["introducao", "desenvolvimento", "conclusao"]);
@@ -182,11 +189,17 @@ export const gradeEssay = createServerFn({ method: "POST" })
         `Nota total 0 a ${maxScore}:\n${briefOf(criteriaModel)}\n\n` +
         "Diga passo a passo quais etapas da técnica apareceram e quais faltaram, citando trechos do aluno entre aspas. " +
         `Em 'rewritten', reescreva o parágrafo em nível nota máxima, mantendo a ideia do aluno.`
-      : "Você é corretor de redação de vestibular e avalia com rigor de banca, em português do Brasil. " +
+      : "Você é corretor oficial de redação e aplica ESTRITAMENTE a grade de correção da banca, em português do Brasil. " +
         `Banca: ${board.label}. ${board.style}\n` +
+        `Extensão prevista: ${board.lines}.\n` +
         `Nota total 0 a ${maxScore}, distribuída assim:\n${briefOf(criteriaModel)}\n\n` +
+        `Situações de anulação (nota 0 total) previstas em edital:\n${board.zeroRules.map((z) => `- ${z}`).join("\n")}\n\n` +
+        `Travas e observações obrigatórias da grade:\n${board.caps.map((c) => `- ${c}`).join("\n")}\n\n` +
+        "Regras de atribuição: escolha para cada critério UMA das faixas oficiais listadas — nunca um valor intermediário. " +
+        "Quando o texto se enquadrar em duas faixas, atribua sempre a faixa MAIS BAIXA. " +
+        "No comentário de cada critério, nomeie a faixa escolhida e justifique com trechos do aluno entre aspas.\n\n" +
         `Padrão de redações nota máxima usado como referência:\n${HIGH_SCORE_LESSONS.map((l) => `- ${l}`).join("\n")}\n\n` +
-        "Seja específico: cite trechos do texto do aluno entre aspas nos comentários. Não invente elogios. " +
+        "Seja específico e não invente elogios. " +
         "Em 'rewritten', reescreva APENAS a introdução do aluno em nível nota máxima, mantendo a tese dele.";
 
     const parsed = await aiJson<{
@@ -215,12 +228,17 @@ export const gradeEssay = createServerFn({ method: "POST" })
     const criteria: CriterionScore[] = criteriaModel.map((c) => {
       const found = (parsed.criteria ?? []).find((p) => String(p.id ?? "") === c.id);
       const raw = Number(found?.score ?? 0);
-      const score = Math.max(0, Math.min(c.max, Number.isFinite(raw) ? raw : 0));
+      const clamped = Math.max(0, Math.min(c.max, Number.isFinite(raw) ? raw : 0));
+      // A banca só admite as faixas oficiais: encaixa na faixa válida mais próxima,
+      // e, em caso de empate, na mais baixa (regra dos guias oficiais).
+      const level = c.levels.reduce((best, l) =>
+        Math.abs(l.score - clamped) < Math.abs(best.score - clamped) ? l : best,
+      c.levels[0]!);
       return {
         id: c.id,
         label: c.label,
         max: c.max,
-        score: Math.round(score * 10) / 10,
+        score: level.score,
         comment: String(found?.comment ?? "").trim(),
       };
     });
