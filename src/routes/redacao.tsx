@@ -15,11 +15,13 @@ import {
   HIGH_SCORE_LESSONS,
   PART_DRILLS,
   STARTER_THEMES,
+
   getBoard,
   getPart,
   type BoardId,
   type EssayPart,
 } from "@/data/redacao-guide";
+import { REAL_THEMES } from "@/data/redacao-corpus";
 import cartilha from "@/assets/cartilha-redacoes.pdf.asset.json";
 
 export const Route = createFileRoute("/redacao")({
@@ -113,7 +115,7 @@ function RedacaoPage() {
   const best = corrected.length ? Math.max(...corrected.map((e) => Number(e.score))) : null;
   const scale = mode === "paragrafo" ? 10 : activeBoard.maxScore;
 
-  async function createTheme() {
+  async function createTheme(exactTitle?: string) {
     setCreating(true);
     try {
       const theme = await generate({
@@ -121,7 +123,8 @@ function RedacaoPage() {
           board,
           mode,
           part: mode === "paragrafo" ? part : undefined,
-          topic: topic.trim() || undefined,
+          exactTitle,
+          topic: exactTitle ? undefined : topic.trim() || undefined,
           avoid: essays.slice(0, 10).map((e) => e.theme_title),
         },
       });
@@ -284,6 +287,40 @@ function RedacaoPage() {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="mt-6 rounded-lg border border-line bg-card p-5">
+        <h2 className="font-display text-lg font-semibold">
+          Temas atuais · {activeBoard.label}
+        </h2>
+        <p className="mt-1 text-sm text-ink-soft">
+          Propostas reais e simulados de 2025–2026 aplicados pelas bancas e nos maiores cursinhos.
+          Clique em um deles para receber a coletânea completa e escrever.
+        </p>
+        <ul className="mt-4 space-y-2">
+          {REAL_THEMES[board].map((t) => {
+            const done = essays.some(
+              (e) => e.theme_title.trim().toLowerCase() === t.title.toLowerCase(),
+            );
+            return (
+              <li key={t.title}>
+                <button
+                  onClick={() => void createTheme(t.title)}
+                  disabled={creating}
+                  className="flex w-full items-start gap-3 rounded-md border border-line px-3 py-2 text-left transition-colors hover:border-sun disabled:opacity-50"
+                >
+                  <span className="mt-0.5 shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-ink-soft">
+                    {t.year}
+                  </span>
+                  <span className="min-w-0 flex-1 text-sm">{t.title}</span>
+                  <span className="mt-0.5 shrink-0 text-[11px] font-medium text-ink-soft">
+                    {done ? "já treinado" : "novo"}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       </div>
 
       <div className="mt-8">

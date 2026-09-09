@@ -59,6 +59,8 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
       .object({
         board: BoardEnum.default("FUVEST"),
         topic: z.string().max(200).optional(),
+        /** Tema oficial/real escolhido pelo aluno — usado literalmente como título. */
+        exactTitle: z.string().max(200).optional(),
         avoid: z.array(z.string().max(200)).max(20).optional(),
         mode: z.enum(["completa", "paragrafo"]).default("completa"),
         part: PartEnum.optional(),
@@ -73,6 +75,8 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
     const drill = isDrill ? getPart(data.part ?? "introducao") : null;
 
     const rule = THEME_TITLE_RULES[board.id];
+    const exactTitle = data.exactTitle?.trim() || null;
+
 
     const ask = async (extra: string) =>
       aiJson<{ title?: string; prompt?: string }>(
@@ -94,6 +98,9 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
             text: [
               `Banca: ${board.label} — ${board.style}`,
               `Extensão da prova: ${board.lines}.`,
+              exactTitle
+                ? `TEMA OBRIGATÓRIO — use EXATAMENTE este título, sem alterar uma palavra: "${exactTitle}". Monte só a coletânea e a instrução da banca para ele.`
+                : "",
               data.topic ? `Assunto pedido pelo aluno: ${data.topic}` : "",
               avoid.length ? `Não repita estes temas:\n${avoid.map((a) => `- ${a}`).join("\n")}` : "",
               extra,
@@ -126,10 +133,10 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
     };
 
     let parsed = await ask("");
-    let title = String(parsed.title ?? "").trim();
+    let title = exactTitle ?? String(parsed.title ?? "").trim();
     let prompt = String(parsed.prompt ?? "").trim();
 
-    if (title && !titleOk(title)) {
+    if (!exactTitle && title && !titleOk(title)) {
       parsed = await ask(
         `O título "${title}" foi REJEITADO (${countWords(title)} palavras) por não seguir o formato da banca ou por repetir uma proposta já aplicada. ` +
           `Reescreva a proposta com um título INÉDITO de ${rule.words.min} a ${rule.words.max} palavras, no formato oficial da ${board.label}, ancorado no debate atual (2025-2026).`,
