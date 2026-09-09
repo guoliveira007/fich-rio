@@ -172,6 +172,12 @@ function RedacaoPage() {
         oficiais, ou um parágrafo por vez, seguindo a técnica de introdução, desenvolvimento e
         conclusão. A ideia é repetir até virar automático.
       </p>
+      <Link
+        to="/oficina"
+        className="mt-3 inline-block rounded-full border border-sun bg-sun/10 px-4 py-1.5 text-sm font-semibold text-sun-deep transition-opacity hover:opacity-80"
+      >
+        Quero escrever com ajuda, período a período →
+      </Link>
 
       <div className="mt-6 flex flex-wrap gap-2">
         {BOARDS.map((b) => (
