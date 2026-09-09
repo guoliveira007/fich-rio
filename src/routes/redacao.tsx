@@ -330,6 +330,55 @@ function RedacaoPage() {
 
       <div className="mt-8 rounded-xl border border-line bg-card p-6">
         <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
+          <ListChecks className="size-4 text-sun-deep" /> Grade oficial da {activeBoard.label}
+        </h2>
+        <p className="mt-1 text-sm text-ink-soft">
+          Nota máxima {activeBoard.maxScore} · {activeBoard.lines}
+        </p>
+        <div className="mt-4 space-y-2">
+          {activeBoard.criteria.map((c) => (
+            <details key={c.id} className="rounded-lg border border-line p-3">
+              <summary className="cursor-pointer text-sm font-semibold">
+                {c.label} <span className="font-mono text-xs text-ink-soft">até {c.max}</span>
+              </summary>
+              <p className="mt-2 text-sm text-ink-soft">{c.hint}</p>
+              <ul className="mt-3 space-y-1.5 text-sm">
+                {c.levels.map((l) => (
+                  <li key={l.label} className="flex gap-2">
+                    <span className="shrink-0 font-mono text-xs text-sun-deep">{l.label}</span>
+                    <span className="text-ink-soft">{l.desc}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ))}
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-destructive">
+              Zera a redação
+            </p>
+            <ul className="mt-2 space-y-1.5 text-sm text-ink-soft">
+              {activeBoard.zeroRules.map((z) => (
+                <li key={z}>• {z}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">
+              Travas da grade
+            </p>
+            <ul className="mt-2 space-y-1.5 text-sm text-ink-soft">
+              {activeBoard.caps.map((c) => (
+                <li key={c}>• {c}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 rounded-xl border border-line bg-card p-6">
+        <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
           <BookOpen className="size-4 text-sun-deep" /> O que separa uma nota alta
         </h2>
         <ul className="mt-3 space-y-2 text-sm text-ink-soft">
