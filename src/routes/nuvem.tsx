@@ -70,6 +70,12 @@ function NuvemPage() {
   const uploadFile = useServerFn(uploadOneDriveFile);
   const queryClient = useQueryClient();
   const { data: subjects = [] } = useQuery({ queryKey: ["subjects"], queryFn: fetchSubjects });
+  const fetchStatus = useServerFn(getOneDriveStatus);
+  const { data: status, isLoading: statusLoading } = useQuery({
+    queryKey: ["onedrive-status"],
+    queryFn: () => fetchStatus(),
+    staleTime: 5 * 60 * 1000,
+  });
 
   const { data: shareRoot, isLoading: shareLoading } = useQuery({
     queryKey: ["onedrive-share", SHARED_FOLDER_URL],
