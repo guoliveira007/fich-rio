@@ -18,7 +18,10 @@ export const REAL_THEMES: Record<BoardId, CorpusTheme[]> = {
     { year: "simulado 2026", title: "Vícios contemporâneos e a crise do sentir" },
     { year: "simulado 2026", title: "O futuro da humanidade ainda pode ser comum?" },
     { year: "simulado 2026", title: "O corpo contemporâneo: entre a liberdade e a performance" },
+    { year: "simulado 2026", title: "A subjetividade humana: entre autenticidade e performance" },
+    { year: "simulado 2026", title: "Ser cidadão no mundo contemporâneo é um privilégio ou um direito?" },
     { year: "simulado 2025", title: "As emoções e sua interferência no processo de comunicação" },
+
   ],
   UNIFESP: [
     {
@@ -56,6 +59,13 @@ export const REAL_THEMES: Record<BoardId, CorpusTheme[]> = {
     },
     { year: "simulado 2026", title: "A busca pelo corpo magro: entre a pressão estética e o benefício à saúde" },
     { year: "simulado 2026", title: "Existe uma crise da sensibilidade na formação das novas gerações?" },
+    { year: "simulado 2026", title: "A redução da maioridade penal é uma medida eficaz de combate à violência?" },
+    {
+      year: "simulado 2026",
+      title: "Descobertas científicas: entre a comoção pública e o rigor metodológico",
+    },
+    { year: "UNESP simulado 2026", title: "Quem se beneficia com a plataformização do trabalho?" },
+
   ],
   ENEM: [
     { year: "2025", title: "Perspectivas acerca do envelhecimento na sociedade brasileira" },
@@ -82,6 +92,8 @@ export const REAL_THEMES: Record<BoardId, CorpusTheme[]> = {
       title: "Desafios para a garantia da segurança cibernética de crianças e adolescentes brasileiros",
     },
     { year: "simulado 2026", title: "Impactos das mudanças climáticas sobre as populações vulneráveis no Brasil" },
+    { year: "simulado 2026", title: "Medidas para impedir casos de violência nas escolas brasileiras" },
+
   ],
 };
 
@@ -105,6 +117,13 @@ export const CURRENT_AGENDA = [
   "formação médica, acesso ao SUS e desertos assistenciais",
   "desinformação, plataformas e regulação digital",
   "cultura brasileira, complexo de vira-lata e valorização da arte nacional",
+  "violência nas escolas e segurança da comunidade escolar",
+  "maioridade penal, sistema socioeducativo e criminalização da juventude",
+  "cidadania, fronteiras e endurecimento das políticas migratórias",
+  "performance de si nas redes: autenticidade, espontaneidade e vitrine digital",
+  "plataformização do trabalho e algoritmos como patrões",
+  "ciência, comoção pública e rigor metodológico na divulgação científica",
+
 ];
 
 /** Bloco de contexto real usado no prompt do gerador de temas. */
