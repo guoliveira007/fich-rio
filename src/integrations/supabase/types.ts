@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_settings: {
+        Row: {
+          created_at: string
+          groq_api_key: string | null
+          groq_model: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          groq_api_key?: string | null
+          groq_model?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          groq_api_key?: string | null
+          groq_model?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       custom_lessons: {
         Row: {
           created_at: string
@@ -61,6 +85,57 @@ export type Database = {
           },
         ]
       }
+      edital_topics: {
+        Row: {
+          board: string | null
+          created_at: string
+          id: string
+          material_id: string | null
+          position: number
+          subject_id: string
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          board?: string | null
+          created_at?: string
+          id?: string
+          material_id?: string | null
+          position?: number
+          subject_id: string
+          topic: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          board?: string | null
+          created_at?: string
+          id?: string
+          material_id?: string | null
+          position?: number
+          subject_id?: string
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edital_topics_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edital_topics_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       error_reviews: {
         Row: {
           concept: string | null
@@ -68,12 +143,17 @@ export type Database = {
           created_at: string
           error_type: string | null
           id: string
+          misstep_step: number | null
+          option_analysis: Json
           question_id: string
           resolved_at: string | null
+          statement_clues: Json
+          steps: Json
           user_explanation: string
           user_id: string
           visual_caption: string | null
           visual_svg: string | null
+          was_correct: boolean
           why_wrong: string | null
         }
         Insert: {
@@ -82,12 +162,17 @@ export type Database = {
           created_at?: string
           error_type?: string | null
           id?: string
+          misstep_step?: number | null
+          option_analysis?: Json
           question_id: string
           resolved_at?: string | null
+          statement_clues?: Json
+          steps?: Json
           user_explanation?: string
           user_id: string
           visual_caption?: string | null
           visual_svg?: string | null
+          was_correct?: boolean
           why_wrong?: string | null
         }
         Update: {
@@ -96,12 +181,17 @@ export type Database = {
           created_at?: string
           error_type?: string | null
           id?: string
+          misstep_step?: number | null
+          option_analysis?: Json
           question_id?: string
           resolved_at?: string | null
+          statement_clues?: Json
+          steps?: Json
           user_explanation?: string
           user_id?: string
           visual_caption?: string | null
           visual_svg?: string | null
+          was_correct?: boolean
           why_wrong?: string | null
         }
         Relationships: [
@@ -186,10 +276,12 @@ export type Database = {
           created_at: string
           exam_id: string
           generation_sources: Json | null
+          has_visual: boolean
           id: string
           is_correct: boolean | null
           number: number
           options: Json | null
+          page_number: number | null
           source_type: string
           statement: string | null
           subject: string | null
@@ -197,16 +289,19 @@ export type Database = {
           topic: string | null
           user_answer: string | null
           user_id: string
+          visual_summary: string | null
         }
         Insert: {
           correct_answer?: string | null
           created_at?: string
           exam_id: string
           generation_sources?: Json | null
+          has_visual?: boolean
           id?: string
           is_correct?: boolean | null
           number: number
           options?: Json | null
+          page_number?: number | null
           source_type?: string
           statement?: string | null
           subject?: string | null
@@ -214,16 +309,19 @@ export type Database = {
           topic?: string | null
           user_answer?: string | null
           user_id: string
+          visual_summary?: string | null
         }
         Update: {
           correct_answer?: string | null
           created_at?: string
           exam_id?: string
           generation_sources?: Json | null
+          has_visual?: boolean
           id?: string
           is_correct?: boolean | null
           number?: number
           options?: Json | null
+          page_number?: number | null
           source_type?: string
           statement?: string | null
           subject?: string | null
@@ -231,6 +329,7 @@ export type Database = {
           topic?: string | null
           user_answer?: string | null
           user_id?: string
+          visual_summary?: string | null
         }
         Relationships: [
           {
@@ -298,6 +397,101 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      exercise_list_items: {
+        Row: {
+          correct_answer: string | null
+          created_at: string
+          done: boolean
+          has_visual: boolean
+          id: string
+          is_correct: boolean | null
+          list_id: string
+          number: number
+          options: Json | null
+          page_number: number | null
+          statement: string | null
+          user_answer: string | null
+          user_id: string
+          visual_summary: string | null
+        }
+        Insert: {
+          correct_answer?: string | null
+          created_at?: string
+          done?: boolean
+          has_visual?: boolean
+          id?: string
+          is_correct?: boolean | null
+          list_id: string
+          number: number
+          options?: Json | null
+          page_number?: number | null
+          statement?: string | null
+          user_answer?: string | null
+          user_id: string
+          visual_summary?: string | null
+        }
+        Update: {
+          correct_answer?: string | null
+          created_at?: string
+          done?: boolean
+          has_visual?: boolean
+          id?: string
+          is_correct?: boolean | null
+          list_id?: string
+          number?: number
+          options?: Json | null
+          page_number?: number | null
+          statement?: string | null
+          user_answer?: string | null
+          user_id?: string
+          visual_summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_list_items_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercise_lists: {
+        Row: {
+          created_at: string
+          file_path: string | null
+          id: string
+          lesson_id: string
+          lesson_title: string | null
+          subject: string | null
+          title: string
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          lesson_id: string
+          lesson_title?: string | null
+          subject?: string | null
+          title: string
+          total_questions?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          lesson_id?: string
+          lesson_title?: string | null
+          subject?: string | null
+          title?: string
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: []
       }
       flashcards: {
         Row: {
@@ -441,7 +635,7 @@ export type Database = {
           link_url: string | null
           read: boolean
           source: string
-          subject_id: string
+          subject_id: string | null
           tags: string[]
           title: string
           topic: string | null
@@ -460,7 +654,7 @@ export type Database = {
           link_url?: string | null
           read?: boolean
           source?: string
-          subject_id: string
+          subject_id?: string | null
           tags?: string[]
           title: string
           topic?: string | null
@@ -479,7 +673,7 @@ export type Database = {
           link_url?: string | null
           read?: boolean
           source?: string
-          subject_id?: string
+          subject_id?: string | null
           tags?: string[]
           title?: string
           topic?: string | null
