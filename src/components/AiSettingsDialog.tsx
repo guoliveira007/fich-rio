@@ -111,6 +111,25 @@ export function AiSettingsDialog({ open, onOpenChange }: Props) {
         </DialogHeader>
 
         <div className="space-y-5">
+          <div className="flex items-start gap-3 rounded-lg border border-line bg-card p-3 text-xs leading-relaxed">
+            <span
+              className={`mt-1 size-2.5 shrink-0 rounded-full ${
+                data?.hasKey ? "bg-emerald-500" : "bg-sun"
+              }`}
+            />
+            <div>
+              <p className="font-medium text-ink">
+                {data?.hasKey ? "Reserva ativa" : "Sem reserva configurada"}
+              </p>
+              <p className="mt-1 text-ink-soft">
+                A IA inclusa do site é sempre usada primeiro.{" "}
+                {data?.hasKey
+                  ? "Quando os créditos dela acabarem, sua chave Groq assume automaticamente."
+                  : "Se os créditos dela acabarem, a IA para até você salvar uma chave Groq aqui."}
+              </p>
+            </div>
+          </div>
+
           <div className="rounded-lg border border-line bg-sun/5 p-3 text-xs leading-relaxed text-ink-soft">
             <p className="font-medium text-ink">Para que serve esta chave</p>
             <p className="mt-1">
