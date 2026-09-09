@@ -133,10 +133,10 @@ export const generateEssayTheme = createServerFn({ method: "POST" })
     };
 
     let parsed = await ask("");
-    let title = String(parsed.title ?? "").trim();
+    let title = exactTitle ?? String(parsed.title ?? "").trim();
     let prompt = String(parsed.prompt ?? "").trim();
 
-    if (title && !titleOk(title)) {
+    if (!exactTitle && title && !titleOk(title)) {
       parsed = await ask(
         `O título "${title}" foi REJEITADO (${countWords(title)} palavras) por não seguir o formato da banca ou por repetir uma proposta já aplicada. ` +
           `Reescreva a proposta com um título INÉDITO de ${rule.words.min} a ${rule.words.max} palavras, no formato oficial da ${board.label}, ancorado no debate atual (2025-2026).`,
