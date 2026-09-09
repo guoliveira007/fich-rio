@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { supabase } from "@/integrations/supabase/client";
+import { claimImportedData } from "@/lib/import-claim.functions";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/importar")({
@@ -40,8 +40,7 @@ function ImportarPage() {
     e.preventDefault();
     setBusy(true);
     try {
-      const { data, error } = await supabase.rpc("claim_imported_data", { _code: code.trim() });
-      if (error) throw error;
+      const { status: data } = await claimImportedData({ data: { code: code.trim() } });
       if (data === "ok") {
         toast.success("Pronto! Seus dados já estão nesta conta.");
         navigate({ to: "/" });

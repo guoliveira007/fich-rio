@@ -947,7 +947,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      claim_imported_data: { Args: { _code: string }; Returns: string }
+      claim_imported_data: {
+        Args: { _code: string; _user_id: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
