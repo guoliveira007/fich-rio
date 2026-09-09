@@ -106,12 +106,32 @@ export function AiSettingsDialog({ open, onOpenChange }: Props) {
             Configurações da IA
           </DialogTitle>
           <DialogDescription>
-            Guarde sua chave da Groq e escolha o modelo usado quando os créditos de IA do site
-            acabarem.
+            Sua chave da Groq é usada quando os créditos de IA do site acabam.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-5">
+          <div className="rounded-lg border border-line bg-sun/5 p-3 text-xs leading-relaxed text-ink-soft">
+            <p className="font-medium text-ink">Para que serve esta chave</p>
+            <p className="mt-1">
+              Com ela ligada, o Fichário consegue corrigir e analisar suas respostas, explicar por
+              que cada alternativa está certa ou errada e montar as revisões dos seus erros.
+            </p>
+            <p className="mt-2">
+              Ela fica guardada só na sua conta, nunca aparece por completo e você pode remover
+              quando quiser. Pegue a sua em{" "}
+              <a
+                href="https://console.groq.com/keys"
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium text-sun-deep underline"
+              >
+                console.groq.com/keys
+              </a>
+              .
+            </p>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="groq-key">Chave de API da Groq</Label>
             <div className="relative">
