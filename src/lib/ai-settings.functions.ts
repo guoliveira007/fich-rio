@@ -53,3 +53,56 @@ export const saveAiSettings = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+const testInput = z.object({
+  /** chave digitada agora; se vazio, testa a chave já salva */
+  groqApiKey: z.string().max(300).optional(),
+  model: modelSchema,
+});
+
+/** Faz uma chamada mínima à Groq para conferir se a chave funciona. */
+export const testAiSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw: unknown) => testInput.parse(raw))
+  .handler(async ({ data, context }) => {
+    let key = data.groqApiKey?.trim() ?? "";
+    if (!key) {
+      const { data: row } = await context.supabase
+        .from("ai_settings")
+        .select("groq_api_key")
+        .eq("user_id", context.userId)
+        .maybeSingle();
+      key = (row?.groq_api_key ?? "").trim();
+    }
+    if (!key) return { ok: false as const, message: "Nenhuma chave informada ou salva." };
+
+    let res: Response;
+    try {
+      res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${key}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: data.model,
+          max_tokens: 5,
+          messages: [{ role: "user", content: "ok" }],
+        }),
+      });
+    } catch {
+      return { ok: false as const, message: "Não foi possível falar com a Groq agora." };
+    }
+
+    if (res.ok) return { ok: true as const, message: "Chave válida — a IA está pronta para usar." };
+
+    const body = await res.text();
+    console.error(`Groq test failed [${res.status}]: ${body}`);
+    if (res.status === 401)
+      return { ok: false as const, message: "Chave recusada pela Groq. Confira se copiou inteira." };
+    if (res.status === 404)
+      return { ok: false as const, message: "Esse modelo não está disponível para a sua conta." };
+    if (res.status === 429)
+      return { ok: false as const, message: "Limite da sua conta Groq atingido. Tente mais tarde." };
+    return { ok: false as const, message: `A Groq respondeu com erro ${res.status}.` };
+  });
