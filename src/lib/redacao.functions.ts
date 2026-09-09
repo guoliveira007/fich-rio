@@ -6,8 +6,10 @@ import { aiJson } from "./exam-ai.server";
 import {
   HIGH_SCORE_LESSONS,
   PARAGRAPH_CRITERIA,
+  THEME_TITLE_RULES,
   getBoard,
   getPart,
+  themeTitleBrief,
   type EssayCriterion,
 } from "@/data/redacao-guide";
 
