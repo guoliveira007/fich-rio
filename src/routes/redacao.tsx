@@ -21,6 +21,7 @@ import {
   type BoardId,
   type EssayPart,
 } from "@/data/redacao-guide";
+import { REAL_THEMES } from "@/data/redacao-corpus";
 import cartilha from "@/assets/cartilha-redacoes.pdf.asset.json";
 
 export const Route = createFileRoute("/redacao")({
