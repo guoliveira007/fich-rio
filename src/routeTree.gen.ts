@@ -10,33 +10,284 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AulasRouteImport } from './routes/aulas'
+import { Route as BibliotecaRouteImport } from './routes/biblioteca'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as FlashcardsRouteImport } from './routes/flashcards'
+import { Route as NuvemRouteImport } from './routes/nuvem'
+import { Route as PraticarRouteImport } from './routes/praticar'
+import { Route as ProgressoRouteImport } from './routes/progresso'
+import { Route as QuizzesRouteImport } from './routes/quizzes'
+import { Route as RedacaoRouteImport } from './routes/redacao'
+import { Route as RevisoesRouteImport } from './routes/revisoes'
+import { Route as BancasIndexRouteImport } from './routes/bancas.index'
+import { Route as BancasBoardIdRouteImport } from './routes/bancas.$boardId'
+import { Route as ListasIdRouteImport } from './routes/listas.$id'
+import { Route as MateriaIdRouteImport } from './routes/materia.$id'
+import { Route as SimuladosIndexRouteImport } from './routes/simulados.index'
+import { Route as SimuladosIdRouteImport } from './routes/simulados.$id'
+import { Route as SimuladosNovoRouteImport } from './routes/simulados.novo'
+import { Route as UploadSessionIdRouteImport } from './routes/upload.$sessionId'
+import { Route as SimuladosIdFazerRouteImport } from './routes/simulados.$id_.fazer'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AulasRoute = AulasRouteImport.update({
+  id: '/aulas',
+  path: '/aulas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BibliotecaRoute = BibliotecaRouteImport.update({
+  id: '/biblioteca',
+  path: '/biblioteca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlashcardsRoute = FlashcardsRouteImport.update({
+  id: '/flashcards',
+  path: '/flashcards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NuvemRoute = NuvemRouteImport.update({
+  id: '/nuvem',
+  path: '/nuvem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PraticarRoute = PraticarRouteImport.update({
+  id: '/praticar',
+  path: '/praticar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressoRoute = ProgressoRouteImport.update({
+  id: '/progresso',
+  path: '/progresso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizzesRoute = QuizzesRouteImport.update({
+  id: '/quizzes',
+  path: '/quizzes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedacaoRoute = RedacaoRouteImport.update({
+  id: '/redacao',
+  path: '/redacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RevisoesRoute = RevisoesRouteImport.update({
+  id: '/revisoes',
+  path: '/revisoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BancasIndexRoute = BancasIndexRouteImport.update({
+  id: '/bancas/',
+  path: '/bancas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BancasBoardIdRoute = BancasBoardIdRouteImport.update({
+  id: '/bancas/$boardId',
+  path: '/bancas/$boardId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListasIdRoute = ListasIdRouteImport.update({
+  id: '/listas/$id',
+  path: '/listas/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MateriaIdRoute = MateriaIdRouteImport.update({
+  id: '/materia/$id',
+  path: '/materia/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimuladosIndexRoute = SimuladosIndexRouteImport.update({
+  id: '/simulados/',
+  path: '/simulados/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimuladosIdRoute = SimuladosIdRouteImport.update({
+  id: '/simulados/$id',
+  path: '/simulados/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimuladosNovoRoute = SimuladosNovoRouteImport.update({
+  id: '/simulados/novo',
+  path: '/simulados/novo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UploadSessionIdRoute = UploadSessionIdRouteImport.update({
+  id: '/upload/$sessionId',
+  path: '/upload/$sessionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimuladosIdFazerRoute = SimuladosIdFazerRouteImport.update({
+  id: '/simulados/$id_/fazer',
+  path: '/simulados/$id/fazer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aulas': typeof AulasRoute
+  '/biblioteca': typeof BibliotecaRoute
+  '/entrar': typeof EntrarRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/nuvem': typeof NuvemRoute
+  '/praticar': typeof PraticarRoute
+  '/progresso': typeof ProgressoRoute
+  '/quizzes': typeof QuizzesRoute
+  '/redacao': typeof RedacaoRoute
+  '/revisoes': typeof RevisoesRoute
+  '/bancas/$boardId': typeof BancasBoardIdRoute
+  '/listas/$id': typeof ListasIdRoute
+  '/materia/$id': typeof MateriaIdRoute
+  '/simulados/$id': typeof SimuladosIdRoute
+  '/simulados/novo': typeof SimuladosNovoRoute
+  '/upload/$sessionId': typeof UploadSessionIdRoute
+  '/bancas/': typeof BancasIndexRoute
+  '/simulados/': typeof SimuladosIndexRoute
+  '/simulados/$id/fazer': typeof SimuladosIdFazerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aulas': typeof AulasRoute
+  '/biblioteca': typeof BibliotecaRoute
+  '/entrar': typeof EntrarRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/nuvem': typeof NuvemRoute
+  '/praticar': typeof PraticarRoute
+  '/progresso': typeof ProgressoRoute
+  '/quizzes': typeof QuizzesRoute
+  '/redacao': typeof RedacaoRoute
+  '/revisoes': typeof RevisoesRoute
+  '/bancas/$boardId': typeof BancasBoardIdRoute
+  '/listas/$id': typeof ListasIdRoute
+  '/materia/$id': typeof MateriaIdRoute
+  '/simulados/$id': typeof SimuladosIdRoute
+  '/simulados/novo': typeof SimuladosNovoRoute
+  '/upload/$sessionId': typeof UploadSessionIdRoute
+  '/bancas': typeof BancasIndexRoute
+  '/simulados': typeof SimuladosIndexRoute
+  '/simulados/$id/fazer': typeof SimuladosIdFazerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aulas': typeof AulasRoute
+  '/biblioteca': typeof BibliotecaRoute
+  '/entrar': typeof EntrarRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/nuvem': typeof NuvemRoute
+  '/praticar': typeof PraticarRoute
+  '/progresso': typeof ProgressoRoute
+  '/quizzes': typeof QuizzesRoute
+  '/redacao': typeof RedacaoRoute
+  '/revisoes': typeof RevisoesRoute
+  '/bancas/$boardId': typeof BancasBoardIdRoute
+  '/listas/$id': typeof ListasIdRoute
+  '/materia/$id': typeof MateriaIdRoute
+  '/simulados/$id': typeof SimuladosIdRoute
+  '/simulados/novo': typeof SimuladosNovoRoute
+  '/upload/$sessionId': typeof UploadSessionIdRoute
+  '/bancas/': typeof BancasIndexRoute
+  '/simulados/': typeof SimuladosIndexRoute
+  '/simulados/$id_/fazer': typeof SimuladosIdFazerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/aulas'
+    | '/biblioteca'
+    | '/entrar'
+    | '/flashcards'
+    | '/nuvem'
+    | '/praticar'
+    | '/progresso'
+    | '/quizzes'
+    | '/redacao'
+    | '/revisoes'
+    | '/bancas/$boardId'
+    | '/listas/$id'
+    | '/materia/$id'
+    | '/simulados/$id'
+    | '/simulados/novo'
+    | '/upload/$sessionId'
+    | '/bancas/'
+    | '/simulados/'
+    | '/simulados/$id/fazer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/aulas'
+    | '/biblioteca'
+    | '/entrar'
+    | '/flashcards'
+    | '/nuvem'
+    | '/praticar'
+    | '/progresso'
+    | '/quizzes'
+    | '/redacao'
+    | '/revisoes'
+    | '/bancas/$boardId'
+    | '/listas/$id'
+    | '/materia/$id'
+    | '/simulados/$id'
+    | '/simulados/novo'
+    | '/upload/$sessionId'
+    | '/bancas'
+    | '/simulados'
+    | '/simulados/$id/fazer'
+  id:
+    | '__root__'
+    | '/'
+    | '/aulas'
+    | '/biblioteca'
+    | '/entrar'
+    | '/flashcards'
+    | '/nuvem'
+    | '/praticar'
+    | '/progresso'
+    | '/quizzes'
+    | '/redacao'
+    | '/revisoes'
+    | '/bancas/$boardId'
+    | '/listas/$id'
+    | '/materia/$id'
+    | '/simulados/$id'
+    | '/simulados/novo'
+    | '/upload/$sessionId'
+    | '/bancas/'
+    | '/simulados/'
+    | '/simulados/$id_/fazer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AulasRoute: typeof AulasRoute
+  BibliotecaRoute: typeof BibliotecaRoute
+  EntrarRoute: typeof EntrarRoute
+  FlashcardsRoute: typeof FlashcardsRoute
+  NuvemRoute: typeof NuvemRoute
+  PraticarRoute: typeof PraticarRoute
+  ProgressoRoute: typeof ProgressoRoute
+  QuizzesRoute: typeof QuizzesRoute
+  RedacaoRoute: typeof RedacaoRoute
+  RevisoesRoute: typeof RevisoesRoute
+  BancasBoardIdRoute: typeof BancasBoardIdRoute
+  ListasIdRoute: typeof ListasIdRoute
+  MateriaIdRoute: typeof MateriaIdRoute
+  SimuladosIdRoute: typeof SimuladosIdRoute
+  SimuladosNovoRoute: typeof SimuladosNovoRoute
+  UploadSessionIdRoute: typeof UploadSessionIdRoute
+  BancasIndexRoute: typeof BancasIndexRoute
+  SimuladosIndexRoute: typeof SimuladosIndexRoute
+  SimuladosIdFazerRoute: typeof SimuladosIdFazerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +299,163 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aulas': {
+      id: '/aulas'
+      path: '/aulas'
+      fullPath: '/aulas'
+      preLoaderRoute: typeof AulasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/biblioteca': {
+      id: '/biblioteca'
+      path: '/biblioteca'
+      fullPath: '/biblioteca'
+      preLoaderRoute: typeof BibliotecaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flashcards': {
+      id: '/flashcards'
+      path: '/flashcards'
+      fullPath: '/flashcards'
+      preLoaderRoute: typeof FlashcardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nuvem': {
+      id: '/nuvem'
+      path: '/nuvem'
+      fullPath: '/nuvem'
+      preLoaderRoute: typeof NuvemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/praticar': {
+      id: '/praticar'
+      path: '/praticar'
+      fullPath: '/praticar'
+      preLoaderRoute: typeof PraticarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progresso': {
+      id: '/progresso'
+      path: '/progresso'
+      fullPath: '/progresso'
+      preLoaderRoute: typeof ProgressoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quizzes': {
+      id: '/quizzes'
+      path: '/quizzes'
+      fullPath: '/quizzes'
+      preLoaderRoute: typeof QuizzesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redacao': {
+      id: '/redacao'
+      path: '/redacao'
+      fullPath: '/redacao'
+      preLoaderRoute: typeof RedacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/revisoes': {
+      id: '/revisoes'
+      path: '/revisoes'
+      fullPath: '/revisoes'
+      preLoaderRoute: typeof RevisoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bancas/': {
+      id: '/bancas/'
+      path: '/bancas'
+      fullPath: '/bancas/'
+      preLoaderRoute: typeof BancasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bancas/$boardId': {
+      id: '/bancas/$boardId'
+      path: '/bancas/$boardId'
+      fullPath: '/bancas/$boardId'
+      preLoaderRoute: typeof BancasBoardIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listas/$id': {
+      id: '/listas/$id'
+      path: '/listas/$id'
+      fullPath: '/listas/$id'
+      preLoaderRoute: typeof ListasIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/materia/$id': {
+      id: '/materia/$id'
+      path: '/materia/$id'
+      fullPath: '/materia/$id'
+      preLoaderRoute: typeof MateriaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/simulados/': {
+      id: '/simulados/'
+      path: '/simulados'
+      fullPath: '/simulados/'
+      preLoaderRoute: typeof SimuladosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/simulados/$id': {
+      id: '/simulados/$id'
+      path: '/simulados/$id'
+      fullPath: '/simulados/$id'
+      preLoaderRoute: typeof SimuladosIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/simulados/novo': {
+      id: '/simulados/novo'
+      path: '/simulados/novo'
+      fullPath: '/simulados/novo'
+      preLoaderRoute: typeof SimuladosNovoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upload/$sessionId': {
+      id: '/upload/$sessionId'
+      path: '/upload/$sessionId'
+      fullPath: '/upload/$sessionId'
+      preLoaderRoute: typeof UploadSessionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/simulados/$id_/fazer': {
+      id: '/simulados/$id_/fazer'
+      path: '/simulados/$id/fazer'
+      fullPath: '/simulados/$id/fazer'
+      preLoaderRoute: typeof SimuladosIdFazerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AulasRoute: AulasRoute,
+  BibliotecaRoute: BibliotecaRoute,
+  EntrarRoute: EntrarRoute,
+  FlashcardsRoute: FlashcardsRoute,
+  NuvemRoute: NuvemRoute,
+  PraticarRoute: PraticarRoute,
+  ProgressoRoute: ProgressoRoute,
+  QuizzesRoute: QuizzesRoute,
+  RedacaoRoute: RedacaoRoute,
+  RevisoesRoute: RevisoesRoute,
+  BancasBoardIdRoute: BancasBoardIdRoute,
+  ListasIdRoute: ListasIdRoute,
+  MateriaIdRoute: MateriaIdRoute,
+  SimuladosIdRoute: SimuladosIdRoute,
+  SimuladosNovoRoute: SimuladosNovoRoute,
+  UploadSessionIdRoute: UploadSessionIdRoute,
+  BancasIndexRoute: BancasIndexRoute,
+  SimuladosIndexRoute: SimuladosIndexRoute,
+  SimuladosIdFazerRoute: SimuladosIdFazerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
