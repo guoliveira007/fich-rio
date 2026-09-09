@@ -34,6 +34,25 @@ function sanitizeId(raw: string, label: string) {
   return value;
 }
 
+/**
+ * Só o dono da conta ligada (perfil admin) pode usar a nuvem.
+ * A conexão do OneDrive é única do projeto, então qualquer outra pessoa logada
+ * estaria acessando arquivos pessoais de terceiros.
+ */
+async function requireOneDriveOwner(userId: string | null | undefined) {
+  if (!userId) throw new Error("Acesso negado.");
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.rpc("has_role", {
+    _user_id: userId,
+    _role: "admin",
+  });
+  if (error) {
+    console.error("[onedrive] verificação de permissão falhou:", error);
+    throw new Error("Acesso negado.");
+  }
+  if (data !== true) throw new Error("Acesso negado.");
+}
+
 async function graph(path: string, init?: RequestInit) {
   const apiKey = process.env["MICROSOFT_ONEDRIVE_API_KEY"];
   const lovableKey = process.env["LOVABLE_API_KEY"];
@@ -92,7 +111,8 @@ function sortItems(items: DriveItem[]) {
 /** Conta Microsoft ligada ao app (conexão única do projeto). */
 export const getOneDriveStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async () => {
+  .handler(async ({ context }) => {
+    await requireOneDriveOwner(context.userId);
     if (!process.env["MICROSOFT_ONEDRIVE_API_KEY"] || !process.env["LOVABLE_API_KEY"]) {
       return { connected: false as const, owner: null, quota: null };
     }
@@ -118,7 +138,8 @@ export const resolveOneDriveShare = createServerFn({ method: "GET" })
   .inputValidator((input: { shareUrl?: string }) => ({
     shareUrl: String(input?.shareUrl ?? SHARED_FOLDER_URL),
   }))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await requireOneDriveOwner(context.userId);
     try {
       const token = encodeShareToken(data.shareUrl);
       const json = await graph(
@@ -147,7 +168,8 @@ export const listOneDriveFolder = createServerFn({ method: "GET" })
     driveId: input?.driveId ? sanitizeId(input.driveId, "Drive") : null,
     itemId: input?.itemId ? sanitizeId(input.itemId, "Item") : null,
   }))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await requireOneDriveOwner(context.userId);
     let target: string;
     let basePath: string;
     let driveId: string | null = null;
@@ -179,7 +201,8 @@ export const getOneDriveFileUrl = createServerFn({ method: "POST" })
     itemId: sanitizeId(input?.itemId ?? "", "Arquivo"),
     driveId: input?.driveId ? sanitizeId(input.driveId, "Drive") : null,
   }))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await requireOneDriveOwner(context.userId);
     const target = data.driveId
       ? `/drives/${data.driveId}/items/${data.itemId}`
       : `/me/drive/items/${data.itemId}`;
@@ -216,7 +239,8 @@ export const uploadOneDriveFile = createServerFn({ method: "POST" })
       contentType: String(input?.contentType ?? "application/octet-stream"),
     };
   })
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await requireOneDriveOwner(context.userId);
     const buffer = Buffer.from(data.contentBase64, "base64");
     const name = encodeURIComponent(data.fileName);
 
