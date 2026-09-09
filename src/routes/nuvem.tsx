@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { useViewer } from "@/components/SplitView";
 import {
+  getOneDriveStatus,
   listOneDriveFolder,
   resolveOneDriveShare,
   SHARED_FOLDER_URL,
@@ -69,6 +70,12 @@ function NuvemPage() {
   const uploadFile = useServerFn(uploadOneDriveFile);
   const queryClient = useQueryClient();
   const { data: subjects = [] } = useQuery({ queryKey: ["subjects"], queryFn: fetchSubjects });
+  const fetchStatus = useServerFn(getOneDriveStatus);
+  const { data: status, isLoading: statusLoading } = useQuery({
+    queryKey: ["onedrive-status"],
+    queryFn: () => fetchStatus(),
+    staleTime: 5 * 60 * 1000,
+  });
 
   const { data: shareRoot, isLoading: shareLoading } = useQuery({
     queryKey: ["onedrive-share", SHARED_FOLDER_URL],
@@ -199,6 +206,55 @@ function NuvemPage() {
           fichário.
         </p>
       </header>
+
+      <div
+        className={`mt-4 flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 text-sm ${
+          status?.connected ? "border-line bg-card" : "border-sun/50 bg-sun/10"
+        }`}
+      >
+        <span
+          className={`size-2.5 shrink-0 rounded-full ${
+            statusLoading ? "bg-ink-soft" : status?.connected ? "bg-emerald-500" : "bg-sun"
+          }`}
+        />
+        <span className="min-w-0 flex-1">
+          {statusLoading ? (
+            <span className="text-ink-soft">Verificando a conta da nuvem…</span>
+          ) : status?.connected ? (
+            <>
+              <span className="font-medium">
+                Conectado{status.owner ? ` como ${status.owner}` : ""}
+              </span>
+              {status.quota?.total ? (
+                <span className="block text-xs text-ink-soft">
+                  {formatSize(status.quota.used)} usados de {formatSize(status.quota.total)}
+                </span>
+              ) : (
+                <span className="block text-xs text-ink-soft">
+                  Os arquivos abaixo vêm dessa conta do OneDrive.
+                </span>
+              )}
+            </>
+          ) : (
+            <>
+              <span className="font-medium">Nuvem indisponível no momento</span>
+              <span className="block text-xs text-ink-soft">
+                A conta do OneDrive do app não respondeu. Tente sincronizar em instantes.
+              </span>
+            </>
+          )}
+        </span>
+        <button
+          onClick={() => {
+            queryClient.invalidateQueries({ queryKey: ["onedrive-status"] });
+            queryClient.invalidateQueries({ queryKey: ["onedrive"] });
+            queryClient.invalidateQueries({ queryKey: ["onedrive-share"] });
+          }}
+          className="shrink-0 rounded-md border border-line px-3 py-1.5 text-xs font-medium hover:bg-sun/10"
+        >
+          Sincronizar
+        </button>
+      </div>
 
       {shareRoot && !inShared && (
         <button

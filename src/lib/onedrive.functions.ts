@@ -89,6 +89,29 @@ function sortItems(items: DriveItem[]) {
   return items;
 }
 
+/** Conta Microsoft ligada ao app (conexão única do projeto). */
+export const getOneDriveStatus = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    if (!process.env["MICROSOFT_ONEDRIVE_API_KEY"] || !process.env["LOVABLE_API_KEY"]) {
+      return { connected: false as const, owner: null, quota: null };
+    }
+    try {
+      const json = await graph("/me/drive?$select=owner,quota");
+      const owner = (json["owner"]?.["user"]?.["displayName"] ?? null) as string | null;
+      const quota = json["quota"]
+        ? {
+            used: Number(json["quota"]["used"] ?? 0),
+            total: Number(json["quota"]["total"] ?? 0),
+          }
+        : null;
+      return { connected: true as const, owner, quota };
+    } catch (err) {
+      console.error("getOneDriveStatus falhou:", err);
+      return { connected: false as const, owner: null, quota: null };
+    }
+  });
+
 /** Resolve o link compartilhado para descobrir drive e item reais da pasta. */
 export const resolveOneDriveShare = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

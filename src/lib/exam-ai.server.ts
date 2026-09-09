@@ -79,6 +79,68 @@ async function callGatewayOnce(
 }
 
 
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+
+/** Chave Groq guardada pela pessoa logada — usada só como reserva. */
+async function loadGroqFallback(): Promise<{ key: string; model: string } | null> {
+  const { currentAiUserId } = await import("@/lib/ai-user-context.server");
+  const userId = currentAiUserId();
+  if (!userId) return null;
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
+      .from("ai_settings")
+      .select("groq_api_key,groq_model")
+      .eq("user_id", userId)
+      .maybeSingle();
+    const key = (data?.groq_api_key ?? "").trim();
+    if (!key) return null;
+    return { key, model: (data?.groq_model ?? "llama-3.3-70b-versatile").trim() };
+  } catch (err) {
+    console.error("Não foi possível ler a chave de reserva:", err);
+    return null;
+  }
+}
+
+/** Converte as partes multimodais em texto simples (a reserva é só texto). */
+function flattenMessages(messages: unknown[]) {
+  return messages.map((message) => {
+    const m = message as { role: string; content: unknown };
+    if (typeof m.content === "string") return { role: m.role, content: m.content };
+    const parts = Array.isArray(m.content) ? (m.content as ContentPart[]) : [];
+    const text = parts
+      .map((p) => (p.type === "text" ? p.text : `[${p.type} não suportado na IA de reserva]`))
+      .join("\n\n");
+    return { role: m.role, content: text };
+  });
+}
+
+async function callGroqFallback(messages: unknown[], options: CallOptions): Promise<string> {
+  const fallback = await loadGroqFallback();
+  if (!fallback) return "";
+
+  const res = await fetch(GROQ_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${fallback.key}`,
+    },
+    body: JSON.stringify({
+      model: fallback.model,
+      messages: flattenMessages(messages),
+      max_tokens: Math.min(options.maxTokens ?? 8000, 8000),
+      ...(options.json ? { response_format: { type: "json_object" } } : {}),
+    }),
+  });
+
+  if (!res.ok) {
+    console.error(`Reserva Groq falhou com status ${res.status}`);
+    return "";
+  }
+  const json = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
+  return json.choices?.[0]?.message?.content ?? "";
+}
+
 async function callGateway(messages: unknown[], options: CallOptions = {}): Promise<string> {
   const attempts = Math.max(1, options.attempts ?? 3);
   let lastError: unknown;
@@ -87,6 +149,12 @@ async function callGateway(messages: unknown[], options: CallOptions = {}): Prom
       return await callGatewayOnce(messages, options);
     } catch (err) {
       lastError = err;
+      const status = err instanceof AiError ? err.status : 0;
+      // Créditos da IA inclusa acabaram (ou limite persistente): tenta a chave da pessoa.
+      if (status === 402 || (status === 429 && attempt === attempts - 1)) {
+        const text = await callGroqFallback(messages, options);
+        if (text.trim()) return text;
+      }
       const retryable = err instanceof AiError ? err.retryable : true;
       if (!retryable || attempt === attempts - 1) break;
       const suggested = err instanceof AiError ? err.delaySeconds : 0;

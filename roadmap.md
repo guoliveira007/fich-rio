@@ -35,6 +35,6 @@
 - Seção Redação (FUVEST): proposta com coletânea, cronômetro, correção por critérios, histórico e média — base na cartilha de redações 44–48
 
 ## Ajustes solicitados (set/2026)
-- [ ] OneDrive: conexão única do workspace (App connector), página Nuvem com status claro e sincronização.
-- [ ] IA: chave Groq salva com segurança como reserva automática quando os créditos da IA inclusa acabam.
-- [ ] Mostrar status/fallback da IA e área para salvar/testar a chave.
+- [x] OneDrive: conexão única do workspace (App connector), página Nuvem com status claro e sincronização.
+- [x] IA: chave Groq salva com segurança como reserva automática quando os créditos da IA inclusa acabam.
+- [x] Mostrar status/fallback da IA e área para salvar/testar a chave.

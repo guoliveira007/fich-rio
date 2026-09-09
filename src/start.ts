@@ -26,7 +26,14 @@ const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });
 
+// Deixa o id da pessoa logada disponível para a camada de IA (reserva Groq).
+const aiUserMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const { runWithAiUser, userIdFromBearer } = await import("@/lib/ai-user-context.server");
+  const userId = userIdFromBearer(request?.headers?.get("authorization") ?? null);
+  return runWithAiUser(userId, () => next());
+});
+
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth, attachFreshSupabaseAuth],
-  requestMiddleware: [errorMiddleware, csrfMiddleware],
+  requestMiddleware: [errorMiddleware, csrfMiddleware, aiUserMiddleware],
 }));
