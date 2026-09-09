@@ -274,6 +274,108 @@ export const HIGH_SCORE_LESSONS = [
   "No ENEM, a conclusão precisa da proposta de intervenção completa (agente, ação, meio, finalidade, detalhamento) articulada ao que foi discutido.",
 ];
 
+/**
+ * Regras de FORMATO do título do tema por banca. Servem para impedir títulos
+ * prolixos/artificiais gerados pela IA.
+ */
+export type ThemeTitleRule = {
+  words: { min: number; max: number };
+  typology: string;
+  formats: string[];
+  examples: string[];
+  forbid: string[];
+};
+
+export const THEME_TITLE_RULES: Record<BoardId, ThemeTitleRule> = {
+  FUVEST: {
+    words: { min: 5, max: 12 },
+    typology:
+      "Reflexivo, filosófico ou sociológico contemporâneo — conciso, sem prolixidade.",
+    formats: [
+      "Pergunta reflexiva direta, curta.",
+      "Sintagma conceitual/abstrato (frase nominal), podendo ter subtítulo curto após dois-pontos.",
+    ],
+    examples: [
+      "O perdão é um ato que pode ser condicionado ou limitado?",
+      "Devem existir limites para a arte?",
+      "O homem saiu de sua menoridade?",
+      "As utopias: indispensáveis, inúteis ou nocivas?",
+      "As relações sociais por meio da solidariedade",
+      "As diferentes faces do riso",
+      "Refugiados ambientais e vulnerabilidade social",
+      "'Camarotização' da sociedade brasileira: a segregação das classes sociais e a democracia",
+    ],
+    forbid: [
+      "fórmulas de proposta de intervenção",
+      "frases acadêmicas infladas, com duas ou mais orações subordinadas",
+      "títulos com mais de 12 palavras",
+    ],
+  },
+  UNIFESP: {
+    words: { min: 6, max: 14 },
+    typology:
+      "Dilema ético/bioético, saúde e ciência, memória ou cidadania, sempre com polarização nítida.",
+    formats: [
+      "Pergunta direta de impasse.",
+      "Contraste binário com subtítulo ou dois polos explícitos ('entre X e Y').",
+    ],
+    examples: [
+      "É possível conciliar mérito e bem comum?",
+      "A engenharia genética ameaça a dignidade humana?",
+      "O fim do anonimato digital reduziria danos causados pelo discurso de ódio?",
+      "O voto nulo é um ato político eficaz?",
+      "Eutanásia: entre a liberdade de escolha e a preservação da vida",
+      "Ser imigrante: entre desafios e oportunidades",
+      "Derrubar monumentos? Os dilemas entre relembrar e apagar o passado",
+    ],
+    forbid: [
+      "temas sem polarização clara",
+      "títulos com mais de 14 palavras",
+      "encadeamento de perguntas ou orações explicativas longas",
+    ],
+  },
+  ENEM: {
+    words: { min: 8, max: 15 },
+    typology:
+      "Problema social contemporâneo e concreto no Brasil: cidadania, direitos, saúde pública ou grupos vulneráveis.",
+    formats: [
+      "Desafios para a/o [problema ou valorização] no Brasil",
+      "Caminhos para [combater/enfrentar/garantir] [problema ou direito] no Brasil",
+      "Perspectivas acerca de [tema] na sociedade brasileira",
+      "O estigma associado a [condição/tema] na sociedade brasileira",
+      "Democratização do acesso a [bem/serviço] no Brasil",
+    ],
+    examples: [
+      "Desafios para a valorização de comunidades e povos tradicionais no Brasil",
+      "Caminhos para combater a invisibilidade do trabalho de cuidado no Brasil",
+      "Perspectivas acerca do envelhecimento populacional na sociedade brasileira",
+      "O estigma associado às doenças mentais na sociedade brasileira",
+      "Democratização do acesso ao cinema no Brasil",
+    ],
+    forbid: [
+      "temas sem a âncora 'no Brasil' ou 'na sociedade brasileira'",
+      "perguntas",
+      "títulos abstratos ou filosóficos",
+      "títulos com mais de 15 palavras",
+    ],
+  },
+};
+
+/** Bloco de instruções de título usado no prompt do gerador de temas. */
+export const themeTitleBrief = (board: BoardId): string => {
+  const r = THEME_TITLE_RULES[board];
+  return [
+    `REGRAS OBRIGATÓRIAS DO TÍTULO (${board}):`,
+    `- Extensão: ${r.words.min} a ${r.words.max} palavras. Conte as palavras antes de responder e reescreva se estourar.`,
+    `- Tipologia: ${r.typology}`,
+    `- Formatos aceitos:\n${r.formats.map((f) => `  • ${f}`).join("\n")}`,
+    `- Exemplos reais no formato correto:\n${r.examples.map((e) => `  • ${e}`).join("\n")}`,
+    `- Proibido: ${r.forbid.join("; ")}.`,
+    '- Proibido, em qualquer banca, título prolixo do tipo: "O erro tornou-se uma ferramenta de aprendizado e humanização ou continua sendo um risco interditado à maioria pela lógica do desempenho?" — longo demais, com duplo encadeamento e linguagem inflada.',
+    "- O título deve soar como enunciado oficial da banca, não como frase de ensaio acadêmico.",
+  ].join("\n");
+};
+
 
 /** Temas de partida quando o aluno não quer gerar um tema novo. */
 export const STARTER_THEMES = [
