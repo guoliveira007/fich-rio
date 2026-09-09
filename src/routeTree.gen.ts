@@ -16,6 +16,7 @@ import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as FlashcardsRouteImport } from './routes/flashcards'
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as NuvemRouteImport } from './routes/nuvem'
+import { Route as OficinaRouteImport } from './routes/oficina'
 import { Route as PraticarRouteImport } from './routes/praticar'
 import { Route as ProgressoRouteImport } from './routes/progresso'
 import { Route as QuizzesRouteImport } from './routes/quizzes'
@@ -64,6 +65,11 @@ const ImportarRoute = ImportarRouteImport.update({
 const NuvemRoute = NuvemRouteImport.update({
   id: '/nuvem',
   path: '/nuvem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OficinaRoute = OficinaRouteImport.update({
+  id: '/oficina',
+  path: '/oficina',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PraticarRoute = PraticarRouteImport.update({
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/flashcards': typeof FlashcardsRoute
   '/importar': typeof ImportarRoute
   '/nuvem': typeof NuvemRoute
+  '/oficina': typeof OficinaRoute
   '/praticar': typeof PraticarRoute
   '/progresso': typeof ProgressoRoute
   '/quizzes': typeof QuizzesRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/flashcards': typeof FlashcardsRoute
   '/importar': typeof ImportarRoute
   '/nuvem': typeof NuvemRoute
+  '/oficina': typeof OficinaRoute
   '/praticar': typeof PraticarRoute
   '/progresso': typeof ProgressoRoute
   '/quizzes': typeof QuizzesRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/flashcards': typeof FlashcardsRoute
   '/importar': typeof ImportarRoute
   '/nuvem': typeof NuvemRoute
+  '/oficina': typeof OficinaRoute
   '/praticar': typeof PraticarRoute
   '/progresso': typeof ProgressoRoute
   '/quizzes': typeof QuizzesRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/flashcards'
     | '/importar'
     | '/nuvem'
+    | '/oficina'
     | '/praticar'
     | '/progresso'
     | '/quizzes'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/flashcards'
     | '/importar'
     | '/nuvem'
+    | '/oficina'
     | '/praticar'
     | '/progresso'
     | '/quizzes'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/flashcards'
     | '/importar'
     | '/nuvem'
+    | '/oficina'
     | '/praticar'
     | '/progresso'
     | '/quizzes'
@@ -287,6 +299,7 @@ export interface RootRouteChildren {
   FlashcardsRoute: typeof FlashcardsRoute
   ImportarRoute: typeof ImportarRoute
   NuvemRoute: typeof NuvemRoute
+  OficinaRoute: typeof OficinaRoute
   PraticarRoute: typeof PraticarRoute
   ProgressoRoute: typeof ProgressoRoute
   QuizzesRoute: typeof QuizzesRoute
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       path: '/nuvem'
       fullPath: '/nuvem'
       preLoaderRoute: typeof NuvemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/oficina': {
+      id: '/oficina'
+      path: '/oficina'
+      fullPath: '/oficina'
+      preLoaderRoute: typeof OficinaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/praticar': {
@@ -463,6 +483,7 @@ const rootRouteChildren: RootRouteChildren = {
   FlashcardsRoute: FlashcardsRoute,
   ImportarRoute: ImportarRoute,
   NuvemRoute: NuvemRoute,
+  OficinaRoute: OficinaRoute,
   PraticarRoute: PraticarRoute,
   ProgressoRoute: ProgressoRoute,
   QuizzesRoute: QuizzesRoute,

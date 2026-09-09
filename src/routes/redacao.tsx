@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, BookOpen, Check, Clock, ListChecks, Loader2, PenLine, Sparkles, Trash2 } from "lucide-react";
@@ -172,6 +172,12 @@ function RedacaoPage() {
         oficiais, ou um parágrafo por vez, seguindo a técnica de introdução, desenvolvimento e
         conclusão. A ideia é repetir até virar automático.
       </p>
+      <Link
+        to="/oficina"
+        className="mt-3 inline-block rounded-full border border-sun bg-sun/10 px-4 py-1.5 text-sm font-semibold text-sun-deep transition-opacity hover:opacity-80"
+      >
+        Quero escrever com ajuda, período a período →
+      </Link>
 
       <div className="mt-6 flex flex-wrap gap-2">
         {BOARDS.map((b) => (
