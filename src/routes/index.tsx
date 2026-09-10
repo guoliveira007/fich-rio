@@ -226,14 +226,17 @@ function Painel() {
         <div className="cardin flex items-center gap-3 [animation-delay:90ms]">
           <div className="flex items-center gap-2 rounded-full border border-line bg-card px-4 py-2">
             <span className="text-lg">🔥</span>
-            <span className="font-display text-lg font-bold text-streak">{streak}</span>
+            <AnimatedNumber
+              value={streak}
+              className="font-display text-lg font-bold text-streak"
+            />
             <span className="font-mono text-[10px] uppercase tracking-wide text-ink-soft">
               dias de sequência
             </span>
           </div>
           <div className="hidden rounded-lg border border-line bg-card px-4 py-2 text-right sm:block">
             <p className="font-display text-lg font-bold leading-none">
-              {points.toLocaleString("pt-BR")}
+              <AnimatedNumber value={points} />
             </p>
             <p className="font-mono text-[10px] uppercase tracking-wide text-ink-soft">pontos</p>
           </div>
