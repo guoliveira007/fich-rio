@@ -204,6 +204,53 @@ export type Database = {
           },
         ]
       }
+      essay_marks: {
+        Row: {
+          created_at: string
+          criado_em: string
+          essay_id: string
+          gravidade: string
+          id: string
+          problema: string
+          step_id: string
+          tipo: string
+          trecho: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          criado_em?: string
+          essay_id: string
+          gravidade?: string
+          id?: string
+          problema?: string
+          step_id: string
+          tipo?: string
+          trecho?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          criado_em?: string
+          essay_id?: string
+          gravidade?: string
+          id?: string
+          problema?: string
+          step_id?: string
+          tipo?: string
+          trecho?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "essay_marks_essay_id_fkey"
+            columns: ["essay_id"]
+            isOneToOne: false
+            referencedRelation: "essays"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       essays: {
         Row: {
           board: string
