@@ -230,6 +230,18 @@ export function Workshop({
   const [planData, setPlanData] = useState<CoachPlan | null>(null);
   const [finalGrade, setFinalGrade] = useState<EssayGrade | null>(null);
   const [grading, setGrading] = useState(false);
+  const [promptOpen, setPromptOpen] = useState(false);
+  const [writing, setWriting] = useState(false);
+  const [dotLabel, setDotLabel] = useState<string | null>(null);
+  const draftRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // Altura automática do campo de escrita (cresce até ~12 linhas).
+  useEffect(() => {
+    const el = draftRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 288)}px`;
+  }, [draft]);
 
   // Cronômetro do treino: minutos já acumulados + tempo desta sessão.
   const startedAt = useRef(Date.now());
