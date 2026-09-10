@@ -54,7 +54,7 @@ export const Route = createFileRoute("/oficina")({
   ),
 });
 
-type Written = { stepId: string; text: string };
+export type Written = { stepId: string; text: string };
 
 const countWords = (t: string) => (t.trim() ? t.trim().split(/\s+/).length : 0);
 
@@ -75,6 +75,18 @@ function assemble(script: CoachStep[], written: Written[]) {
   if (acc.length) blocks.push(acc.join(" "));
   return blocks.join("\n\n");
 }
+
+/**
+ * Reconstrói os períodos já escritos a partir do texto salvo, distribuindo as
+ * frases na ordem do roteiro para o aluno continuar de onde parou.
+ */
+export function rebuildWritten(script: CoachStep[], text: string): Written[] {
+  const sentences = (text.match(/[^.!?…]+[.!?…]*/g) ?? [])
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return sentences.slice(0, script.length).map((s, i) => ({ stepId: script[i]!.id, text: s }));
+}
+
 
 function OficinaPage() {
   const generate = useServerFn(generateEssayTheme);

@@ -26,6 +26,7 @@ import { Route as BancasIndexRouteImport } from './routes/bancas.index'
 import { Route as BancasBoardIdRouteImport } from './routes/bancas.$boardId'
 import { Route as ListasIdRouteImport } from './routes/listas.$id'
 import { Route as MateriaIdRouteImport } from './routes/materia.$id'
+import { Route as OficinaEssayIdRouteImport } from './routes/oficina_.$essayId'
 import { Route as SimuladosIndexRouteImport } from './routes/simulados.index'
 import { Route as SimuladosIdRouteImport } from './routes/simulados.$id'
 import { Route as SimuladosNovoRouteImport } from './routes/simulados.novo'
@@ -117,6 +118,11 @@ const MateriaIdRoute = MateriaIdRouteImport.update({
   path: '/materia/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OficinaEssayIdRoute = OficinaEssayIdRouteImport.update({
+  id: '/oficina_/$essayId',
+  path: '/oficina/$essayId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SimuladosIndexRoute = SimuladosIndexRouteImport.update({
   id: '/simulados/',
   path: '/simulados/',
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/bancas/$boardId': typeof BancasBoardIdRoute
   '/listas/$id': typeof ListasIdRoute
   '/materia/$id': typeof MateriaIdRoute
+  '/oficina/$essayId': typeof OficinaEssayIdRoute
   '/simulados/$id': typeof SimuladosIdRoute
   '/simulados/novo': typeof SimuladosNovoRoute
   '/upload/$sessionId': typeof UploadSessionIdRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/bancas/$boardId': typeof BancasBoardIdRoute
   '/listas/$id': typeof ListasIdRoute
   '/materia/$id': typeof MateriaIdRoute
+  '/oficina/$essayId': typeof OficinaEssayIdRoute
   '/simulados/$id': typeof SimuladosIdRoute
   '/simulados/novo': typeof SimuladosNovoRoute
   '/upload/$sessionId': typeof UploadSessionIdRoute
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   '/bancas/$boardId': typeof BancasBoardIdRoute
   '/listas/$id': typeof ListasIdRoute
   '/materia/$id': typeof MateriaIdRoute
+  '/oficina_/$essayId': typeof OficinaEssayIdRoute
   '/simulados/$id': typeof SimuladosIdRoute
   '/simulados/novo': typeof SimuladosNovoRoute
   '/upload/$sessionId': typeof UploadSessionIdRoute
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/bancas/$boardId'
     | '/listas/$id'
     | '/materia/$id'
+    | '/oficina/$essayId'
     | '/simulados/$id'
     | '/simulados/novo'
     | '/upload/$sessionId'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/bancas/$boardId'
     | '/listas/$id'
     | '/materia/$id'
+    | '/oficina/$essayId'
     | '/simulados/$id'
     | '/simulados/novo'
     | '/upload/$sessionId'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/bancas/$boardId'
     | '/listas/$id'
     | '/materia/$id'
+    | '/oficina_/$essayId'
     | '/simulados/$id'
     | '/simulados/novo'
     | '/upload/$sessionId'
@@ -308,6 +320,7 @@ export interface RootRouteChildren {
   BancasBoardIdRoute: typeof BancasBoardIdRoute
   ListasIdRoute: typeof ListasIdRoute
   MateriaIdRoute: typeof MateriaIdRoute
+  OficinaEssayIdRoute: typeof OficinaEssayIdRoute
   SimuladosIdRoute: typeof SimuladosIdRoute
   SimuladosNovoRoute: typeof SimuladosNovoRoute
   UploadSessionIdRoute: typeof UploadSessionIdRoute
@@ -437,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MateriaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/oficina_/$essayId': {
+      id: '/oficina_/$essayId'
+      path: '/oficina/$essayId'
+      fullPath: '/oficina/$essayId'
+      preLoaderRoute: typeof OficinaEssayIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/simulados/': {
       id: '/simulados/'
       path: '/simulados'
@@ -492,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   BancasBoardIdRoute: BancasBoardIdRoute,
   ListasIdRoute: ListasIdRoute,
   MateriaIdRoute: MateriaIdRoute,
+  OficinaEssayIdRoute: OficinaEssayIdRoute,
   SimuladosIdRoute: SimuladosIdRoute,
   SimuladosNovoRoute: SimuladosNovoRoute,
   UploadSessionIdRoute: UploadSessionIdRoute,
