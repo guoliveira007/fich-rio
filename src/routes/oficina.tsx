@@ -191,12 +191,16 @@ function OficinaPage() {
   );
 }
 
-function Workshop({
+export function Workshop({
   session,
   onExit,
+  initialWritten = [],
+  initialMinutes = 0,
 }: {
   session: { essayId: string; title: string; prompt: string; board: BoardId };
   onExit: () => void;
+  initialWritten?: Written[];
+  initialMinutes?: number;
 }) {
   const plan = useServerFn(coachPlan);
   const step = useServerFn(coachStep);
@@ -205,7 +209,8 @@ function Workshop({
   const script = useMemo(() => coachScript(session.board), [session.board]);
   const board = getBoard(session.board);
 
-  const [written, setWritten] = useState<Written[]>([]);
+  const [written, setWritten] = useState<Written[]>(initialWritten);
+  const [editing, setEditing] = useState<number | null>(null);
   const [draft, setDraft] = useState("");
   const [feedback, setFeedback] = useState<CoachFeedback | null>(null);
   const [checking, setChecking] = useState(false);
@@ -214,14 +219,51 @@ function Workshop({
   const [finalGrade, setFinalGrade] = useState<EssayGrade | null>(null);
   const [grading, setGrading] = useState(false);
 
+  // Cronômetro do treino: minutos já acumulados + tempo desta sessão.
+  const startedAt = useRef(Date.now());
+  const elapsedMinutes = () =>
+    Math.max(0, Math.round(initialMinutes + (Date.now() - startedAt.current) / 60000));
+
   const index = written.length;
-  const current = script[index] ?? null;
+  const current = editing !== null ? (script[editing] ?? null) : (script[index] ?? null);
   const text = useMemo(() => assemble(script, written), [script, written]);
-  const done = index >= script.length;
+  const done = index >= script.length && editing === null;
 
   async function save(next: Written[]) {
     setWritten(next);
-    await supabase.from("essays").update({ text: assemble(script, next) }).eq("id", session.essayId);
+    const { error } = await supabase
+      .from("essays")
+      .update({ text: assemble(script, next), minutes: elapsedMinutes() })
+      .eq("id", session.essayId);
+    if (error) {
+      toast.error("Não consegui salvar seu texto agora. Verifique a conexão antes de continuar.");
+    }
+  }
+
+  /** Guarda o diagnóstico do período para depois agregar os erros mais recorrentes. */
+  async function saveMarks(stepId: string, marks: CoachMark[]) {
+    if (marks.length === 0) return;
+    const { data: auth } = await supabase.auth.getUser();
+    const userId = auth.user?.id;
+    if (!userId) return;
+    await supabase.from("essay_marks").insert(
+      marks.map((m) => ({
+        user_id: userId,
+        essay_id: session.essayId,
+        step_id: stepId,
+        trecho: m.trecho,
+        tipo: m.tipo,
+        gravidade: m.gravidade,
+        problema: m.problema,
+      })),
+    );
+  }
+
+  function leave() {
+    if (draft.trim() && !window.confirm("Você tem um período escrito que ainda não foi enviado. Sair mesmo assim?")) {
+      return;
+    }
+    onExit();
   }
 
   async function check() {
@@ -242,9 +284,24 @@ function Workshop({
 
   async function accept(value: string) {
     if (!current) return;
-    await save([...written, { stepId: current.id, text: value.trim() }]);
+    const entry = { stepId: current.id, text: value.trim() };
+    const next =
+      editing !== null
+        ? written.map((w) => (w.stepId === entry.stepId ? entry : w))
+        : [...written, entry];
+    const marks = feedback?.marcacoes ?? [];
+    setEditing(null);
     setDraft("");
     setFeedback(null);
+    await save(next);
+    void saveMarks(entry.stepId, marks);
+  }
+
+  function reopen(stepIndex: number) {
+    if (draft.trim() && !window.confirm("Você tem um período em andamento. Trocar para editar este outro?")) return;
+    setEditing(stepIndex);
+    setFeedback(null);
+    setDraft(written.find((w) => w.stepId === script[stepIndex]?.id)?.text ?? "");
   }
 
   async function buildPlan() {
