@@ -18,7 +18,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { errorMessage } from "@/lib/error-message";
 import { RichText } from "@/lib/text";
 import { generateEssayTheme, gradeEssay, type EssayGrade } from "@/lib/redacao.functions";
-import { coachPlan, coachStep, type CoachFeedback, type CoachPlan } from "@/lib/redacao-coach.functions";
+import {
+  coachPlan,
+  coachStep,
+  type CoachFeedback,
+  type CoachMark,
+  type CoachPlan,
+} from "@/lib/redacao-coach.functions";
 import { coachScript, type CoachStep } from "@/data/redacao-coach";
 import { BOARDS, STARTER_THEMES, getBoard, type BoardId } from "@/data/redacao-guide";
 import { REAL_THEMES } from "@/data/redacao-corpus";
