@@ -343,15 +343,29 @@ function RedacaoPage() {
           <ul className="mt-3 space-y-2">
             {essays.map((e) => (
               <li key={e.id} className="flex items-center gap-3 rounded-xl border border-line bg-card p-4">
-                <button onClick={() => setOpenId(e.id)} className="min-w-0 flex-1 text-left">
-                  <p className="truncate text-sm font-medium">{e.theme_title}</p>
-                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-soft">
-                    {e.board} ·{" "}
-                    {(e.mode ?? "completa") === "paragrafo" ? getPart(e.part ?? "").label : "completa"} ·{" "}
-                    {new Date(e.created_at).toLocaleDateString("pt-BR")} ·{" "}
-                    {e.status === "corrigida" ? "corrigida" : "rascunho"}
-                  </p>
-                </button>
+                {(e.mode ?? "completa") === "completa" && e.status !== "corrigida" ? (
+                  <Link
+                    to="/oficina/$essayId"
+                    params={{ essayId: e.id }}
+                    className="min-w-0 flex-1 text-left"
+                  >
+                    <p className="truncate text-sm font-medium">{e.theme_title}</p>
+                    <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-soft">
+                      {e.board} · completa · {new Date(e.created_at).toLocaleDateString("pt-BR")} ·
+                      continuar na oficina
+                    </p>
+                  </Link>
+                ) : (
+                  <button onClick={() => setOpenId(e.id)} className="min-w-0 flex-1 text-left">
+                    <p className="truncate text-sm font-medium">{e.theme_title}</p>
+                    <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-soft">
+                      {e.board} ·{" "}
+                      {(e.mode ?? "completa") === "paragrafo" ? getPart(e.part ?? "").label : "completa"} ·{" "}
+                      {new Date(e.created_at).toLocaleDateString("pt-BR")} ·{" "}
+                      {e.status === "corrigida" ? "corrigida" : "rascunho"}
+                    </p>
+                  </button>
+                )}
                 {e.score != null && (
                   <span className="shrink-0 font-display text-xl font-bold text-sun-deep">
                     {Number(e.score)}

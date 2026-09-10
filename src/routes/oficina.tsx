@@ -54,7 +54,7 @@ export const Route = createFileRoute("/oficina")({
   ),
 });
 
-type Written = { stepId: string; text: string };
+export type Written = { stepId: string; text: string };
 
 const countWords = (t: string) => (t.trim() ? t.trim().split(/\s+/).length : 0);
 
@@ -75,6 +75,18 @@ function assemble(script: CoachStep[], written: Written[]) {
   if (acc.length) blocks.push(acc.join(" "));
   return blocks.join("\n\n");
 }
+
+/**
+ * Reconstrói os períodos já escritos a partir do texto salvo, distribuindo as
+ * frases na ordem do roteiro para o aluno continuar de onde parou.
+ */
+export function rebuildWritten(script: CoachStep[], text: string): Written[] {
+  const sentences = (text.match(/[^.!?…]+[.!?…]*/g) ?? [])
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return sentences.slice(0, script.length).map((s, i) => ({ stepId: script[i]!.id, text: s }));
+}
+
 
 function OficinaPage() {
   const generate = useServerFn(generateEssayTheme);
@@ -318,8 +330,8 @@ export function Workshop({
   async function finish() {
     setGrading(true);
     try {
-      await supabase.from("essays").update({ text }).eq("id", session.essayId);
-      setFinalGrade(await grade({ data: { essayId: session.essayId, minutes: 0 } }));
+      await supabase.from("essays").update({ text, minutes: elapsedMinutes() }).eq("id", session.essayId);
+      setFinalGrade(await grade({ data: { essayId: session.essayId, minutes: elapsedMinutes() } }));
     } catch (err) {
       toast.error(errorMessage(err, "Não consegui corrigir agora."));
     } finally {
@@ -330,7 +342,7 @@ export function Workshop({
   return (
     <div className="mx-auto max-w-5xl">
       <button
-        onClick={onExit}
+        onClick={leave}
         className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-soft hover:text-sun-deep"
       >
         <ArrowLeft className="size-3.5" /> sair da oficina
@@ -425,10 +437,36 @@ export function Workshop({
             )}
           </div>
 
-          {text && (
+          {written.length > 0 && (
             <div className="rounded-xl border border-line bg-card p-5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">Seu texto até aqui</p>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed">{text}</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">
+                Seu texto até aqui · toque num período para reescrever
+              </p>
+              <div className="mt-3 space-y-3">
+                {(["introducao", "d1", "d2", "conclusao"] as const).map((block) => {
+                  const items = written
+                    .map((w) => ({ w, i: script.findIndex((s) => s.id === w.stepId) }))
+                    .filter(({ i }) => i >= 0 && script[i]!.block === block);
+                  if (items.length === 0) return null;
+                  return (
+                    <p key={block} className="text-sm leading-relaxed">
+                      {items.map(({ w, i }) => (
+                        <button
+                          key={w.stepId}
+                          type="button"
+                          title={`Reescrever: ${script[i]!.label}`}
+                          onClick={() => reopen(i)}
+                          className={`text-left transition-colors hover:bg-sun/10 ${
+                            editing === i ? "bg-sun/15" : ""
+                          }`}
+                        >
+                          {w.text}{" "}
+                        </button>
+                      ))}
+                    </p>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
@@ -459,7 +497,14 @@ export function Workshop({
                 <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">
                   Escreva só este período
                 </p>
-                <p className="font-mono text-[10px] text-ink-soft">
+                <p
+                  className={`font-mono text-[10px] ${
+                    countWords(draft) > 0 &&
+                    (countWords(draft) < current.words.min || countWords(draft) > current.words.max)
+                      ? "font-semibold text-destructive"
+                      : "text-ink-soft"
+                  }`}
+                >
                   {countWords(draft)} palavras · alvo {current.words.min}–{current.words.max}
                 </p>
               </div>
