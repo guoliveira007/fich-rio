@@ -6,7 +6,7 @@ const GATEWAY_URL = "https://connector-gateway.lovable.dev/microsoft_onedrive/v1
 
 /** Pasta compartilhada configurada para o fichário (link 1drv.ms do usuário). */
 export const SHARED_FOLDER_URL =
-  "https://1drv.ms/f/c/94358144d9c0b85a/IgCdnjmbRR8dSol59LEDf1foAZDD7OBh-0FBUR0M9UDtb4w?e=TMa8gU";
+  "https://1drv.ms/f/c/94358144d9c0b85a/IgCdU_8VJGXsR4DGFoTAi2anAU4ta3v9vNmAY0LamGtqYDA?e=sfwkqU";
 
 export type DriveItem = {
   id: string;
