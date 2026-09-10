@@ -156,7 +156,32 @@ export const coachStep = createServerFn({ method: "POST" })
     const strList = (v: unknown) =>
       Array.isArray(v) ? v.map((s) => String(s).trim()).filter(Boolean).slice(0, 3) : [];
     const nota = Number(parsed.nota);
+
+    const sentence = data.sentence.trim();
+    const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+    const haystack = norm(sentence);
+    const marcacoes: CoachMark[] = (Array.isArray(parsed.marcacoes) ? parsed.marcacoes : [])
+      .map((m): CoachMark | null => {
+        const raw = m as Partial<CoachMark>;
+        const trecho = String(raw?.trecho ?? "").trim().replace(/^["“']|["”']$/g, "");
+        if (!trecho || !haystack.includes(norm(trecho))) return null;
+        const g = String(raw?.gravidade ?? "media");
+        return {
+          trecho,
+          gravidade: g === "grave" || g === "leve" ? g : "media",
+          tipo: String(raw?.tipo ?? "ajuste").trim(),
+          problema: String(raw?.problema ?? "").trim(),
+          comoMelhorar: Array.isArray(raw?.comoMelhorar)
+            ? raw.comoMelhorar.map((s) => String(s).trim()).filter(Boolean).slice(0, 3)
+            : [],
+          sugestao: String(raw?.sugestao ?? "").trim(),
+        };
+      })
+      .filter((m): m is CoachMark => m !== null)
+      .slice(0, 5);
+
     return {
+      marcacoes,
       aprovado: parsed.aprovado !== false,
       nota: Number.isFinite(nota) ? Math.max(0, Math.min(10, Math.round(nota * 10) / 10)) : 0,
       acertos: strList(parsed.acertos),
