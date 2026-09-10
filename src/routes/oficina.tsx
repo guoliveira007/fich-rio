@@ -351,13 +351,16 @@ export function Workshop({
       <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-sun-deep">
         {board.label} · treino guiado
       </p>
-      <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">{session.title}</h1>
+      <h1 className="mt-1 font-display text-xl font-bold tracking-tight lg:text-2xl">{session.title}</h1>
 
       <div className="mt-4 flex flex-wrap gap-1.5">
         {script.map((s, i) => (
-          <span
+          <button
             key={s.id}
+            type="button"
             title={s.label}
+            aria-label={s.label}
+            onClick={() => setDotLabel(s.label)}
             className={`h-1.5 w-8 rounded-full ${
               i < index ? "bg-sun" : i === index ? "bg-sun/50" : "bg-line"
             }`}
@@ -366,6 +369,14 @@ export function Workshop({
         <span className="ml-2 font-mono text-[10px] text-ink-soft">
           {index}/{script.length} períodos · {countWords(text)} palavras
         </span>
+      </div>
+      {dotLabel && <p className="mt-1.5 font-mono text-[10px] text-ink-soft">{dotLabel}</p>}
+
+      <div className="sticky top-0 z-30 -mx-4 mt-3 border-y border-line bg-background/95 px-4 py-2 backdrop-blur lg:hidden">
+        <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft">
+          {index}/{script.length} períodos
+          {current ? ` · ${current.label}` : ""}
+        </p>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_1.15fr]">
