@@ -14,11 +14,21 @@ export type CoachPlan = {
   armadilhas: string[];
 };
 
+export type CoachMark = {
+  trecho: string;
+  gravidade: "grave" | "media" | "leve";
+  tipo: string;
+  problema: string;
+  comoMelhorar: string[];
+  sugestao: string;
+};
+
 export type CoachFeedback = {
   aprovado: boolean;
   nota: number;
   acertos: string[];
   ajustes: string[];
+  marcacoes: CoachMark[];
   versaoMelhor: string;
   porqueMelhor: string;
   dicaProximo: string;
