@@ -18,7 +18,10 @@ export function Reveal({
   y?: number;
   delayStep?: number;
 }) {
-  const ref = useRevealOnView<HTMLDivElement>({ y, delayStep });
+  const ref = useRevealOnView<HTMLDivElement>({
+    ...(y === undefined ? {} : { y }),
+    ...(delayStep === undefined ? {} : { delayStep }),
+  });
   return (
     <div ref={ref} className={cn(className)}>
       {children}
