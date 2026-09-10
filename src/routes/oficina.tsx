@@ -369,10 +369,26 @@ export function Workshop({
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_1.15fr]">
-        <div className="space-y-4">
+        <div className="order-2 space-y-4 lg:order-none">
           <div className="rounded-xl border border-line bg-card p-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">Proposta e coletânea</p>
-            <RichText className="mt-3 space-y-3 whitespace-pre-wrap text-sm leading-relaxed">
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">Proposta e coletânea</p>
+              <button
+                type="button"
+                onClick={() => setPromptOpen((v) => !v)}
+                className="font-mono text-[10px] uppercase tracking-[0.14em] text-sun-deep hover:opacity-80 lg:hidden"
+              >
+                {promptOpen ? "ocultar" : "ver proposta e coletânea"}
+              </button>
+            </div>
+            <p className={`mt-2 text-sm font-medium ${promptOpen ? "lg:hidden" : ""} ${promptOpen ? "hidden" : ""}`}>
+              {session.title}
+            </p>
+            <RichText
+              className={`mt-3 space-y-3 whitespace-pre-wrap text-sm leading-relaxed lg:block ${
+                promptOpen ? "" : "hidden"
+              }`}
+            >
               {session.prompt}
             </RichText>
           </div>
