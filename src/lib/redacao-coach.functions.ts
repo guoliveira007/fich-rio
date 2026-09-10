@@ -130,7 +130,16 @@ export const coachStep = createServerFn({ method: "POST" })
         "(não invente dados nem troque o argumento dele). Em 'porqueMelhor', explique em uma frase o que mudou. " +
         "'aprovado' é true quando o período cumpre a função e pode seguir adiante mesmo sem ser perfeito. " +
         "'nota' é de 0 a 10 só para este período. 'dicaProximo' orienta o que escrever no próximo período, ligado ao que ele já escreveu.\n" +
-        'Responda só JSON: {"aprovado":true,"nota":0,"acertos":["..."],"ajustes":["..."],"versaoMelhor":"...","porqueMelhor":"...","dicaProximo":"..."}',
+        "Em 'marcacoes', aponte de 0 a 5 trechos problemáticos DO PERÍODO ENVIADO. Cada 'trecho' deve ser uma cópia EXATA e literal de " +
+        "um pedaço contínuo do período do aluno (mesmas palavras, mesma acentuação, sem reescrever, sem reticências), curto (2 a 12 palavras). " +
+        "'gravidade': 'grave' para o que derruba nota na grade (fuga/tese frágil, erro grave de norma culta, incoerência, senso comum), " +
+        "'media' para problemas de coesão, imprecisão vocabular ou argumento pouco desenvolvido, 'leve' para estilo, repetição e pequenos ajustes. " +
+        "'tipo' é um rótulo curto (ex.: 'norma culta', 'coesão', 'clareza', 'argumentação', 'repertório'). " +
+        "'problema' explica em uma frase o que está errado ali. 'comoMelhorar' traz 2 ou 3 caminhos práticos e distintos de correção. " +
+        "'sugestao' é a reescrita apenas daquele trecho.\n" +
+        'Responda só JSON: {"aprovado":true,"nota":0,"acertos":["..."],"ajustes":["..."],' +
+        '"marcacoes":[{"trecho":"...","gravidade":"grave|media|leve","tipo":"...","problema":"...","comoMelhorar":["...","..."],"sugestao":"..."}],' +
+        '"versaoMelhor":"...","porqueMelhor":"...","dicaProximo":"..."}',
       [
         {
           type: "text",
