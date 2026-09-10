@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -230,6 +230,18 @@ export function Workshop({
   const [planData, setPlanData] = useState<CoachPlan | null>(null);
   const [finalGrade, setFinalGrade] = useState<EssayGrade | null>(null);
   const [grading, setGrading] = useState(false);
+  const [promptOpen, setPromptOpen] = useState(false);
+  const [writing, setWriting] = useState(false);
+  const [dotLabel, setDotLabel] = useState<string | null>(null);
+  const draftRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // Altura automática do campo de escrita (cresce até ~12 linhas).
+  useEffect(() => {
+    const el = draftRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 288)}px`;
+  }, [draft]);
 
   // Cronômetro do treino: minutos já acumulados + tempo desta sessão.
   const startedAt = useRef(Date.now());
@@ -351,13 +363,16 @@ export function Workshop({
       <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-sun-deep">
         {board.label} · treino guiado
       </p>
-      <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">{session.title}</h1>
+      <h1 className="mt-1 font-display text-xl font-bold tracking-tight lg:text-2xl">{session.title}</h1>
 
       <div className="mt-4 flex flex-wrap gap-1.5">
         {script.map((s, i) => (
-          <span
+          <button
             key={s.id}
+            type="button"
             title={s.label}
+            aria-label={s.label}
+            onClick={() => setDotLabel(s.label)}
             className={`h-1.5 w-8 rounded-full ${
               i < index ? "bg-sun" : i === index ? "bg-sun/50" : "bg-line"
             }`}
@@ -367,12 +382,34 @@ export function Workshop({
           {index}/{script.length} períodos · {countWords(text)} palavras
         </span>
       </div>
+      {dotLabel && <p className="mt-1.5 font-mono text-[10px] text-ink-soft">{dotLabel}</p>}
+
+      <div className="sticky top-0 z-30 -mx-4 mt-3 border-y border-line bg-background/95 px-4 py-2 backdrop-blur lg:hidden">
+        <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft">
+          {index}/{script.length} períodos
+          {current ? ` · ${current.label}` : ""}
+        </p>
+      </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_1.15fr]">
-        <div className="space-y-4">
+        <div className="order-2 space-y-4 lg:order-none">
           <div className="rounded-xl border border-line bg-card p-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">Proposta e coletânea</p>
-            <RichText className="mt-3 space-y-3 whitespace-pre-wrap text-sm leading-relaxed">
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">Proposta e coletânea</p>
+              <button
+                type="button"
+                onClick={() => setPromptOpen((v) => !v)}
+                className="font-mono text-[10px] uppercase tracking-[0.14em] text-sun-deep hover:opacity-80 lg:hidden"
+              >
+                {promptOpen ? "ocultar" : "ver proposta e coletânea"}
+              </button>
+            </div>
+            <p className={`mt-2 text-sm font-medium ${promptOpen ? "hidden" : "lg:hidden"}`}>{session.title}</p>
+            <RichText
+              className={`mt-3 space-y-3 whitespace-pre-wrap text-sm leading-relaxed lg:block ${
+                promptOpen ? "" : "hidden"
+              }`}
+            >
               {session.prompt}
             </RichText>
           </div>
@@ -471,7 +508,7 @@ export function Workshop({
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="order-1 space-y-4 lg:order-none">
           {current && (
             <div className="rounded-xl border border-sun/40 bg-sun/5 p-5">
               <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-sun-deep">
@@ -509,13 +546,22 @@ export function Workshop({
                 </p>
               </div>
               <textarea
+                ref={draftRef}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
+                onFocus={() => setWriting(true)}
+                onBlur={() => window.setTimeout(() => setWriting(false), 200)}
                 rows={4}
                 placeholder="Um período só, terminando em ponto final…"
-                className="mt-3 w-full rounded-md border border-line bg-background px-3 py-2 text-sm leading-relaxed outline-none focus:border-sun"
+                className="mt-3 max-h-[18rem] w-full resize-none overflow-y-auto rounded-md border border-line bg-background px-3 py-2 text-sm leading-relaxed outline-none focus:border-sun"
               />
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div
+                className={
+                  writing
+                    ? "fixed inset-x-0 bottom-0 z-40 flex flex-wrap items-center gap-2 border-t border-line bg-card px-4 py-3 shadow-[0_-8px_24px_-16px_oklch(0_0_0/0.5)] lg:static lg:mt-3 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"
+                    : "mt-3 flex flex-wrap gap-2"
+                }
+              >
                 <button
                   onClick={() => void check()}
                   disabled={checking}
