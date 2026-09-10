@@ -442,6 +442,15 @@ function Workshop({
                   {feedback.nota}/10 · {feedback.aprovado ? "pode seguir" : "vale reescrever"}
                 </span>
               </div>
+              {feedback.marcacoes.length > 0 && (
+                <MarkedSentence
+                  sentence={draft}
+                  marks={feedback.marcacoes}
+                  onUseSuggestion={(mark) =>
+                    setDraft((d) => replaceMark(d, mark.trecho, mark.sugestao))
+                  }
+                />
+              )}
               {feedback.acertos.length > 0 && (
                 <ul className="mt-3 space-y-1.5 text-sm">
                   {feedback.acertos.map((a) => (
