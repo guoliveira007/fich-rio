@@ -381,9 +381,7 @@ export function Workshop({
                 {promptOpen ? "ocultar" : "ver proposta e coletânea"}
               </button>
             </div>
-            <p className={`mt-2 text-sm font-medium ${promptOpen ? "lg:hidden" : ""} ${promptOpen ? "hidden" : ""}`}>
-              {session.title}
-            </p>
+            <p className={`mt-2 text-sm font-medium ${promptOpen ? "hidden" : "lg:hidden"}`}>{session.title}</p>
             <RichText
               className={`mt-3 space-y-3 whitespace-pre-wrap text-sm leading-relaxed lg:block ${
                 promptOpen ? "" : "hidden"
