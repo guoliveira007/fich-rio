@@ -497,7 +497,14 @@ export function Workshop({
                 <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">
                   Escreva só este período
                 </p>
-                <p className="font-mono text-[10px] text-ink-soft">
+                <p
+                  className={`font-mono text-[10px] ${
+                    countWords(draft) > 0 &&
+                    (countWords(draft) < current.words.min || countWords(draft) > current.words.max)
+                      ? "font-semibold text-destructive"
+                      : "text-ink-soft"
+                  }`}
+                >
                   {countWords(draft)} palavras · alvo {current.words.min}–{current.words.max}
                 </p>
               </div>
