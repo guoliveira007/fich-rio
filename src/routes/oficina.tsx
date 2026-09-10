@@ -471,7 +471,7 @@ export function Workshop({
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="order-1 space-y-4 lg:order-none">
           {current && (
             <div className="rounded-xl border border-sun/40 bg-sun/5 p-5">
               <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-sun-deep">
