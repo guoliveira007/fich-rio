@@ -509,13 +509,22 @@ export function Workshop({
                 </p>
               </div>
               <textarea
+                ref={draftRef}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
+                onFocus={() => setWriting(true)}
+                onBlur={() => window.setTimeout(() => setWriting(false), 200)}
                 rows={4}
                 placeholder="Um período só, terminando em ponto final…"
-                className="mt-3 w-full rounded-md border border-line bg-background px-3 py-2 text-sm leading-relaxed outline-none focus:border-sun"
+                className="mt-3 max-h-[18rem] w-full resize-none overflow-y-auto rounded-md border border-line bg-background px-3 py-2 text-sm leading-relaxed outline-none focus:border-sun"
               />
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div
+                className={
+                  writing
+                    ? "fixed inset-x-0 bottom-0 z-40 flex flex-wrap items-center gap-2 border-t border-line bg-card px-4 py-3 shadow-[0_-8px_24px_-16px_oklch(0_0_0/0.5)] lg:static lg:mt-3 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"
+                    : "mt-3 flex flex-wrap gap-2"
+                }
+              >
                 <button
                   onClick={() => void check()}
                   disabled={checking}
