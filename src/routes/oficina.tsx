@@ -562,6 +562,158 @@ function Workshop({
   );
 }
 
+const SEVERITY: Record<CoachMark["gravidade"], { label: string; underline: string; chip: string }> = {
+  grave: {
+    label: "erro grave",
+    underline: "decoration-destructive bg-destructive/10 hover:bg-destructive/20",
+    chip: "bg-destructive/10 text-destructive",
+  },
+  media: {
+    label: "atenção",
+    underline: "decoration-sun-deep bg-sun/15 hover:bg-sun/25",
+    chip: "bg-sun/15 text-sun-deep",
+  },
+  leve: {
+    label: "ajuste leve",
+    underline: "decoration-ink-soft bg-ink-soft/10 hover:bg-ink-soft/20",
+    chip: "bg-ink-soft/10 text-ink-soft",
+  },
+};
+
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const markRegex = (trecho: string) =>
+  new RegExp(trecho.trim().split(/\s+/).map(escapeRe).join("\\s+"), "i");
+
+function replaceMark(sentence: string, trecho: string, sugestao: string) {
+  if (!sugestao) return sentence;
+  return sentence.replace(markRegex(trecho), sugestao);
+}
+
+type Piece = { text: string; mark: CoachMark | null };
+
+/** Quebra o período em pedaços, marcando os trechos apontados pela correção. */
+function splitBy(sentence: string, marks: CoachMark[]): Piece[] {
+  let pieces: Piece[] = [{ text: sentence, mark: null }];
+  for (const mark of marks) {
+    const next: Piece[] = [];
+    let used = false;
+    for (const piece of pieces) {
+      if (used || piece.mark) {
+        next.push(piece);
+        continue;
+      }
+      const found = markRegex(mark.trecho).exec(piece.text);
+      if (!found) {
+        next.push(piece);
+        continue;
+      }
+      used = true;
+      const before = piece.text.slice(0, found.index);
+      const after = piece.text.slice(found.index + found[0].length);
+      if (before) next.push({ text: before, mark: null });
+      next.push({ text: found[0], mark });
+      if (after) next.push({ text: after, mark: null });
+    }
+    pieces = next;
+  }
+  return pieces;
+}
+
+function MarkedSentence({
+  sentence,
+  marks,
+  onUseSuggestion,
+}: {
+  sentence: string;
+  marks: CoachMark[];
+  onUseSuggestion: (mark: CoachMark) => void;
+}) {
+  const [open, setOpen] = useState<number | null>(null);
+  const pieces = useMemo(() => splitBy(sentence, marks), [sentence, marks]);
+  const active = open === null ? null : (pieces[open]?.mark ?? null);
+
+  return (
+    <div className="mt-3">
+      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">
+        O que revisar no seu período · toque no trecho sublinhado
+      </p>
+      <p className="mt-2 text-sm leading-loose">
+        {pieces.map((piece, i) =>
+          piece.mark ? (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setOpen(open === i ? null : i)}
+              className={`rounded-sm underline decoration-wavy decoration-2 underline-offset-4 transition-colors ${
+                SEVERITY[piece.mark.gravidade].underline
+              } ${open === i ? "ring-1 ring-sun" : ""}`}
+            >
+              {piece.text}
+            </button>
+          ) : (
+            <span key={i}>{piece.text}</span>
+          ),
+        )}
+      </p>
+
+      <div className="mt-2 flex flex-wrap gap-2">
+        {(["grave", "media", "leve"] as const).map((g) => (
+          <span
+            key={g}
+            className={`rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${SEVERITY[g].chip}`}
+          >
+            {SEVERITY[g].label}
+          </span>
+        ))}
+      </div>
+
+      {active && (
+        <div className="mt-3 rounded-lg border border-line bg-background p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className={`rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${
+                SEVERITY[active.gravidade].chip
+              }`}
+            >
+              {SEVERITY[active.gravidade].label}
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-soft">
+              {active.tipo}
+            </span>
+          </div>
+          <p className="mt-2 text-sm">{active.problema}</p>
+          {active.comoMelhorar.length > 0 && (
+            <>
+              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft">
+                Como melhorar
+              </p>
+              <ul className="mt-1.5 space-y-1 text-sm text-ink-soft">
+                {active.comoMelhorar.map((c) => (
+                  <li key={c}>• {c}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {active.sugestao && (
+            <div className="mt-3 rounded-md bg-sun/5 p-2.5">
+              <p className="text-sm leading-relaxed">{active.sugestao}</p>
+              <button
+                onClick={() => {
+                  onUseSuggestion(active);
+                  setOpen(null);
+                }}
+                className="mt-2 rounded-md border border-line px-2.5 py-1 text-xs font-semibold transition-colors hover:border-sun"
+              >
+                trocar este trecho
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
