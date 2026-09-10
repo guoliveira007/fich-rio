@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Target } from "lucide-react";
 
 import { AppShell } from "@/components/AppShell";
+import { AnimatedNumber } from "@/components/fx/AnimatedNumber";
 import { FlashcardReview } from "@/components/FlashcardReview";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
